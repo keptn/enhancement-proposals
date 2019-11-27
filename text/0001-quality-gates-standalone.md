@@ -6,7 +6,7 @@ Allow usage and installation of Keptn quality gates without deployment and testi
 
 Let's say you want to use your existing tools for deploying and testing your applications - you can still use Keptn Quality Gates for extensive evaluation of service level objectives (SLOs). 
 
-## Explaination
+## Explanation
 At first we describe our understanding of service level objectives and how they can be configured. Then we describe how a user would work with the Keptn Quality Gates for evaluation.
 
 ### Prerequisites
