@@ -1,4 +1,4 @@
-# Replace this with your awesome KEP title
+# Behavioral change of JMeter
 
 Behavioral change of the testing service in Keptn (jmeter-service) to not send evaluation-done events, but rather a test-finished events with a test result.
 
