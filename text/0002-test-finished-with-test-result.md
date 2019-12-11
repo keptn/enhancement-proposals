@@ -34,7 +34,7 @@ Instead of sending a `sh.keptn.events.evaluation-done` event for a failed test e
 
 ## Internal details
 
-* *How the change would impact and interact with existing functionality?*: Since the jmeter-service does not send the `sh.keptn.events.evaluation-done`, the lighthouse-service is responsible for this step. To make sure, the lighthouse-service could receive the test result and skips the process of querying the SLI-provider since no monitoring data from the test would be available. 
+* *How the change would impact and interact with existing functionality?*: Since the jmeter-service does not send the `sh.keptn.events.evaluation-done`, the lighthouse-service is responsible for this step.
 
 ## Trade-offs and mitigations
 
@@ -50,4 +50,4 @@ The semantic of the `result` property in the `sh.keptn.events.tests-finished` ev
 
 ## Future possibilities
 
-N/A
+To optimize the evaluation workflow after a test execution, the lighthouse-service could receive the test result. If the result is `fail`, the lighthouse-service could skips the process of querying the SLI-provider since no monitoring data from the test would be available. 
