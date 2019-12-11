@@ -1,6 +1,6 @@
 # Behavioral change of JMeter
 
-Behavioral change of the testing service in Keptn (jmeter-service) to not send evaluation-done events, but rather a test-finished events with a test result.
+Behavioral change of the testing service in Keptn (jmeter-service) to not send an evaluation-done event for failed tests, but rather a test-finished event with a test result set to *fail*.
 
 ## Motivation
 
