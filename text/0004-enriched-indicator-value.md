@@ -23,7 +23,7 @@ In the current approach of implementing an SLI-provider*, the provider has to se
 
 The limitation is now that describing an SLI by one metric is too restricted. Most likely, more data points for an indicator are available that would provide an even better understanding of the indicator and support the visualization of the SLI. Additionally, a link for drilling into the tool (that is queried by the SLI provider) is useful to get a look at the actual (real) data set.
 
-(* An SLI-provider is a vendor-specific service that query data from a data source (e.g, from a monitoring or testing solution) using an SLI configuration.)
+(* An SLI-provider is a vendor-specific service that queries data from a data source (e.g, from a monitoring or testing solution) using an SLI configuration.)
 
 ## Explanation
 
@@ -56,7 +56,7 @@ Instead of limiting an indicator to a single value, this KEP proposes to enrich 
 
 ## Breaking changes
 
-There is no breaking change since this KEP just adds two properties to an event, but does not remove or rename a property.
+There is no breaking change since this KEP adds two properties to an event, but does not remove or rename a property.
 
 ## Open questions
 
