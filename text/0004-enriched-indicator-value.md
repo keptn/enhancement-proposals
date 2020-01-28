@@ -52,12 +52,12 @@ Instead of limiting an indicator to a single value, this KEP proposes to enrich 
 
 ## Trade-offs and mitigations
 
-*What are some drawbacks? What are some ways that they might be mitigated?*: A drawback is the amount of data stored by Keptn. The internal data store of Keptn should not grow due to data that is not needed. There should be an agreement on how many values are returned (see open question).
+*What are some drawbacks? What are some ways that they might be mitigated?*: A drawback is the amount of data stored by Keptn. The internal data store of Keptn should not grow due to data that is not needed. There should be an agreement on how many values for an indicator are provided (see open question).
 
 ## Breaking changes
 
-There is no breaking change since this KEP just adds a property to an event, but does not remove or rename a property
+There is no breaking change since this KEP just adds two properties to an event, but does not remove or rename a property.
 
 ## Open questions
 
-Sending all data that is available for an indicator does not make sense since it is then duplicated. The origin of the data should be the monitoring/testing tool that provides the data for the SLI-provider. It should be clarified, how many values make sense.
+Sending all data that is available for an indicator does not make sense since it is then a duplicate to the original data set. The origin of the data has to be the monitoring/testing tool that provides the data for the SLI-provider. It should be clarified, how many values make sense.
