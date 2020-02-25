@@ -15,9 +15,10 @@ As these tools are currently sending the Deployment Finished Event to Keptn I pr
 
 ## Internal details
 
-I propose that we extend the Deployment Finished Event with a new field called "deployedEndpoint" (happy to have a discussion on how this field should be named in the end). Deployment Tools that send a deployment finished event to Keptn SHOULD (but are not obliged) to fill this field.
-If this field IS PROVIDED keptn services such as the JMeter, Neotys ... service can use this URL to execute their tests against.
-If this field IS NOT provided then services such as JMeter, Neotys ... can fall back to their current "guestimation" of the URL
+I propose that we extend the Deployment Finished Event with two new fields called "deploymentURILocal" and "deploymentURIPublic". Deployment Tools that send a deployment finished event to Keptn SHOULD (but are not obliged) to fill these fields.
+* If the "deploymentURILocal" field IS PROVIDED, Keptn services such as the JMeter, Neotys, etc. can use this URL to execute their tests against.
+* If the "deploymentURILocal" field IS NOT PROVIDED, but the field "deploymentURIPublic" is provided, Keptn services such as the JMeter, Neotys, etc. can use this URL to execute their tests against.
+* If non of these fields are provided, services such as JMeter, Neotys, etc. can fall back to their current "guestimation" of the URL.
 
 ## Trade-offs and mitigations
 
