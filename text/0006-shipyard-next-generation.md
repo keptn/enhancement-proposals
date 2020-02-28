@@ -233,7 +233,7 @@ In regard to the Keptn CloudEvents specification:
 
 * Is there a reserved space in the event payload to which a Keptn-service can add data to? E.g. for a deployment task:
 
-  ```json
+  ```
   {
     "type": "sh.keptn.event.deployment.started",
     ...
