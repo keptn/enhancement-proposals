@@ -6,7 +6,7 @@ The next generation of Shipyard to allow custom delivery/remediation processes.
 
 *There's always room for smart enhancements* - the Shipyard specification is no exception.
 
-A shipyard allows a Site Reliability Engineer (SRE) to specify WHAT should happen in the course of an artifact delivery or remediation process. Due to certain use cases, it has been identified that the current specification of the shipyard has limitations and hides details from the SRE. This KEP proposes an enhancement of the *Shipyard* specification to bring flexibility into the definition of the *WHAT*, but still provides an opinionated approach and smart defaults.
+A shipyard allows a **Site Reliability Engineer (SRE)** to specify WHAT should happen in the course of an artifact delivery or remediation process. Due to certain use cases, it has been identified that the current specification of the shipyard has limitations and hides details from the SRE. This KEP proposes an enhancement of the *Shipyard* specification to bring flexibility into the definition of the *WHAT*, but still provides an opinionated approach and smart defaults.
 
 Please read this KEP in combination with the KEP: [First version of a Keptn uniform](https://github.com/keptn/enhancement-proposals/pull/7); especially regarding the eventing part.
 
@@ -131,7 +131,7 @@ rollback:
 
 ### Shipyard controller
 
-This KEP also proposes the implementation of a Keptn core component - the so-called *shipyard controller*. This controller implements the functionality described above.  
+This KEP also proposes the implementation of a Keptn core component - the so-called *shipyard controller*. This controller implements the functionality described above. Besides, this controller is responsible for keeping workflows atomic. This means that a workflow is executed based on the shipyard, which was configured when the workflow was triggered. In other words, an update of a shipyard (and its containing workflows) does NOT impact ongoing workflows.
 
 ## Breaking changes
 
