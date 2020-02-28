@@ -245,6 +245,8 @@ In regard to the Keptn CloudEvents specification:
   }
   ```
 
+* Where are task properties (`kind: functional` or `strategy: blue_green`) added to the CloudEvent so that the are considered by selectors? 
+
 ## Future possibilities
 
 * A future change this proposal enables is a fix of the Keptn CloudEvent specification. Currently, there are different ways of formulating the CloudEvent `type` property: `sh.keptn.events.evaluation-done` vs `sh.keptn.internal.event.get-sli.done`. 
