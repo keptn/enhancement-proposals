@@ -145,6 +145,8 @@ N/A
 
 - Uniform on project level: **What are the implications from an architectural perspective?** > How to handle the situation when two projects declare the same *Keptn-service*, but with different listening events, versions, or environment variables?
 
+- How to deal with "provider" services, e.g., sli-provider or remediation-provider. How to configure these services in the uniform? From an architectural perspective, are calls to these services synchronously or asynchronously?
+
 ## Future possibilities
 
 - A future change this proposal enables is the separation of Keptn's control plane from Keptn`s execution/delivery plane. In other words, the Keptn core (Keptn's control plane) can run on Kubernetes cluster A, while the supporting Keptn-services in the uniform (Keptn's delivery plane) can run on Kubernetes cluster B. Cluster B could be the cluster where the actual deployment/testing/releasing is happening.
