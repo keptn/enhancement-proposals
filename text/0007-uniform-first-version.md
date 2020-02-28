@@ -8,7 +8,7 @@ The Keptn needs a uniform, the definition of HOW it has to work.
 
 *) Remark: A Keptn-service is the executable unit of a task. It is triggered by an event of a task and it has to notify about its *start* and *finished* status using events. 
 
-Please read this KEP in combination with the KEP: [The next generation of Shipyard]().
+Please read this KEP in combination with the KEP: [The next generation of Shipyard](https://github.com/keptn/enhancement-proposals/pull/6).
 
 ## Explanation
 
