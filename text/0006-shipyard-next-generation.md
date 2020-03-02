@@ -106,7 +106,7 @@ spec:
 
 1. Task properties: The additional task properties (e.g., task `test` specifies the property: `kind:functional`) is added to the `[task].triggered` event.
 
-1. Data flow: A task can add any data to the event payload. The Keptn's control plane takes care that the data is not lost and delivered to the next task. As more tasks are added to a workflow, as more data can be added to the event stream (= all events occurring in a workflow).
+1. Data flow: A task can add any data to the event payload (reserved space, see below). The Keptn's control plane takes care that the data is not lost and delivered to the next task. As more tasks are added to a workflow, as more data can be added to the event stream (= all events occurring in a workflow).
 
 ### Event selector
 
@@ -132,6 +132,71 @@ rollback:
 ### Shipyard controller
 
 This KEP also proposes the implementation of a Keptn core component - the so-called *shipyard controller*. This controller implements the functionality described above. Besides, this controller is responsible for keeping workflows atomic. This means that a workflow is executed based on the shipyard, which was configured when the workflow was triggered. In other words, an update of a shipyard (and its containing workflows) does NOT impact ongoing workflows.
+
+### Keptn CloudEvents
+
+Based on the propsed concepts, changes on the Keptn CloudEvents are necessary.
+
+**(1) Reserved space in CloudEvent payload:**
+
+Before the shipyard controller sends out a `[task].triggered` event for a specific task, the controller adds a reserved space to the event payload. This reserved space is named after the task and can be consumed by the unit (Keptn-service) that executes the task. For example, a *deployment* task gets the reserved space of *deployment* in the payload (i.e., data field) of the CloudEvent. Per default, this reserved space is empty. Expect for tasks that have properties defined in the shipyard (e.g., `strategy: blue_green`) - for those tasks the properties are added to the reserved space:
+  
+```
+{
+  "type": "sh.keptn.event.deployment.triggered",
+  ...
+  "data": {
+    "deployment": {
+      "strategy": "blue_green"
+    }
+  }
+}
+```
+
+*Implementation details:* 
+* Keptn-services can add any information to the reserved space. For example:
+  ```
+  {
+    "type": "sh.keptn.event.deployment.triggered",
+    ...
+    "data": {
+      "deployment": {
+        "strategy": "blue_green",
+        "deploymentURI":"https://my-service.domain.com/" // Property added by Keptn-service
+      }
+    }
+  }
+  ```
+
+* The event selectors for Keptn-services, as proposed in [First version of a Keptn uniform](https://github.com/keptn/enhancement-proposals/pull/7), work based on the information provided in this reserved space. For example:
+  ```yaml
+    - name: deployment-service
+      image: keptn/helm-service:0.6.0
+      events:
+        - deployment.triggered:
+          selector:
+            matchExpressions:
+              - {key: strategy, operator: In, values: [direct, blue_green]}
+  ```
+
+* The shipyard controller merges the reserved spaces of a `[task-xyz].triggered`, `[task-xyz].started` and `[task-xyz].finished` event. If, for example, the `deployment.triggered` event contains `strategy:blue_green` and the `deployment.finished` event contains `deploymentURI:xyz` in the reserved space, the shipyard controller merges the the reserved space, before sending the next `[test].triggered`: 
+  ```
+  {
+    "type": "sh.keptn.event.task-abc.triggered",
+    ...
+    "data": {
+      "deployment": {
+        "strategy": "blue_green",
+        "deploymentURI":"https://my-service.domain.com/" // Property added by Keptn-service
+      }
+      "test": {
+
+      }
+    }
+  }
+  ```
+
+
 
 ## Breaking changes
 
@@ -228,24 +293,7 @@ spec:
 
 ## Open questions
 
-In regard to the Keptn CloudEvents specification:  
-* Does a event name (e.g, `[task].started`) contain the stage and workflow name? (e.g., `sh.keptn.event.[dev].[workflow].[task].started`)
-
-* Is there a reserved space in the event payload to which a Keptn-service can add data to? E.g. for a deployment task:
-
-  ```
-  {
-    "type": "sh.keptn.event.deployment.started",
-    ...
-    "data": {
-      "deployment": {
-        "key":"value" // data provided by the Keptn-service
-      }
-    }
-  }
-  ```
-
-* Where are task properties (`kind: functional` or `strategy: blue_green`) added to the CloudEvent so that the are considered by selectors? 
+- Do we need a CloudEvent specification for workflow events? 
 
 ## Future possibilities
 
