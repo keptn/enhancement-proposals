@@ -127,6 +127,8 @@ Given this second event selector approach, a Keptn-service can react upon one ev
 
 ### Impact on existing functionality
 
+- In Keptn 0.6.0, a separation of Keptn core services (i.e., required for a Keptn installation) from use-case specific Keptn-services is done based on files. The `core.yaml` contains all core services, while `continuous-deployment.yaml`, `continuous-operations.yaml`, and `quality-gates.yaml` contain the use-case specific ones.
+
 - Keptn 0.6.0 installation process: The *Keptn-services* that are responsible for a delivery or remediation workflow (aka, batteries such as: jmeter-service, lighthouse-service, remedation-service, etc.), need to be removed from the installation process of Keptn. Instead, these services must move to a default uniform the user can adapt and apply.
 
 ## Trade-offs and mitigations
@@ -147,4 +149,4 @@ N/A
 
 ## Future possibilities
 
-- A future change this proposal enables is the separation of Keptn's control plane from Keptn`s execution/delivery plane. In other words, the Keptn core (Keptn's control plane) can run on Kubernetes cluster A, while the supporting Keptn-services in the uniform (Keptn's delivery plane) can run on Kubernetes cluster B. Cluster B could be the cluster where the actual deployment/testing/releasing is happening.
+- Currently, `keptn install` provides the flag `--use-case=quality-gates` for installing the Keptn-services required for the quality gates only use-case. This flag can become obsolete when the concept of the uniform is implemented because then the tooling is a question of the applied uniform.
