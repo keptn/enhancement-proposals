@@ -53,15 +53,15 @@ spec:
 *Definition of a Problem:*
 * **problem:** A unique identifier of the problem. 
 * **actions:** An array of *actions* that are executed in the given order.
-  * **action**: A unique name of the remedation action. 
+  * **action**: A unique name of the remediation action. 
   * **description**: A short description of the action.
-  * **type:** The type of the action: **keptn-service**, **webhook**, (**container**).
+  * **type:** The type of the action: **keptn-service**, **webhook**.
   * **provider | hook:** If type *keptn-service* is selected, the service to call is specified by the **provider** property. If type *webhook* is selected, the endpoint to call is specified by the **hook** property.
   * **parameters:** An array of individual `key:value` pairs used for executing the action by the action-provider. 
 
 ### Action types
 
-In this KEP, two action types are proposed:
+In this KEP, two types of an action are proposed:
 
 **1. keptn-service**: An action of type *keptn-service* has a corresponding action-provider, which is deployed and managed by Keptn. This action-provider takes care of executing the remediation action.
   * Benefit: DevOps has control over the deployed action-providers. 
@@ -159,3 +159,5 @@ N/A
 ## Future possibilities
 
 - This KEP allows supporting multiple remediation actions for a service. 
+
+- The action type of a `container` would be a suggestion for future enhancements. Thus, a user can specify a container image that will be launched by Keptn before executing the action. 
