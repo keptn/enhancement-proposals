@@ -147,6 +147,8 @@ N/A
 
 - Uniform on project level: **What are the implications from an architectural perspective?** > How to handle the situation when two projects declare the same *Keptn-service*, but with different listening events, versions, or environment variables?
 
+- How to deal with "provider" services, e.g., sli-provider or remediation-provider. How to configure these services in the uniform? From an architectural perspective, are calls to these services synchronously or asynchronously?
+
 ## Future possibilities
 
 - Currently, `keptn install` provides the flag `--use-case=quality-gates` for installing the Keptn-services required for the quality gates only use-case. This flag can become obsolete when the concept of the uniform is implemented because then the tooling is a question of the applied uniform.
