@@ -18,7 +18,7 @@ To address this gap, this KEP proposes a behavioral change in configuring a reme
 
 * The current spec does not allow specifying an action-provider. An action-provider is the service that is responsible for executing the action. -> Consequently, the spec change has to provide the option to clarify which service can execute the action.
 
-* Remediation actions are currently implemented in the remediation-service and a Dev can only select one of the implemented actions. This also goes along with the problem that it is not possible to use an individual action-provider. 
+* Remediation actions are currently implemented in the remediation-service and a Dev can only select one of the implemented actions. This also goes along with the problem that it is not possible to use a custom action-provider. 
 
 ## Internal details
 
@@ -34,14 +34,14 @@ metadata:
   name: remediation-service-abc
 spec:
   problems: 
-  - problem: Response time degradation
-    actions:
-      - action: togglefeature
-        description: Toggle feature flag EnablePromotion from ON to OFF
-        type: keptn-service
-        provider: unleash
-        parameters: 
-          - EnablePromotion: off
+    - problem: Response time degradation
+      actions:
+        - action: togglefeature
+          description: Toggle feature flag EnablePromotion from ON to OFF
+          type: keptn-service
+          provider: unleash
+          parameters: 
+            - EnablePromotion: off
 ```
 
 *Meta-data:*
@@ -130,22 +130,22 @@ metadata:
   name: remedation-service-abc
 spec:
   problems: 
-  - problem: Response time degradation
-    actions:
-      - action: scaling
-        description: Please provide a description for the remediation action.
-        type: keptn-service
-        provider: # TBD
-        parameters: 
-          - value: +1
-  - problem: Failure rate increase
-    actions:
-      - action: featuretoggle
-        description: Please provide a description for the remediation action.
-        type: keptn-service
-        provider: unleash
-        parameters: 
-          - EnablePromotion: off
+    - problem: Response time degradation
+      actions:
+        - action: scaling
+          description: Please provide a description for the remediation action.
+          type: keptn-service
+          provider: # TBD
+          parameters: 
+            - value: +1
+    - problem: Failure rate increase
+      actions:
+        - action: featuretoggle
+          description: Please provide a description for the remediation action.
+          type: keptn-service
+          provider: unleash
+          parameters: 
+            - EnablePromotion: off
 ```
 
 ## Prior art and alternatives
