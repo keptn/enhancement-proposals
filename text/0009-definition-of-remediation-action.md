@@ -4,9 +4,9 @@ The built-in remediation actions in Keptn 0.6.0 have to become customizable.
 
 ## Motivation
 
-Automating operational tasks is a core use case of Keptn. Consequently, means are provided that allow a service switching into a remediation mode when a problem for this service is detected. In this remediation mode, Keptn takes care of executing specified remediation actions. After the execution of one action, Keptn validates the effect of the performed remediation action to verify whether the problem is resolved. If it is not resolved, the next action gets triggered until no action is available. Finally, a not-resolved problem should be escalated. In the implementation of Keptn 0.6.0, this workflow is not supported and it is not possible to use custom remediation actions. 
+Automating operational tasks is a **core use-case** of Keptn. Consequently, means are provided that allow a service switching into a remediation mode when a problem for this service is detected. In this remediation mode, Keptn takes care of executing specified remediation actions. After the execution of one action, Keptn validates the effect of the performed remediation action to verify whether the problem is resolved. If it is not resolved, the next action gets triggered until no action is available. Finally, a not-resolved problem should be escalated. In the implementation of Keptn 0.6.0, this workflow is not supported and it is not possible to use custom remediation actions. 
 
-To address this gap, this KEP proposes a behavioral change in configuring a remediation action for a service and it proposes a spec change that introduces the property of an action *type*. Latter allows adding a custom remedation actions.
+To enable the mentioned use-case, this KEP proposes a behavioral change in configuring a remediation action for a service and it proposes a spec change that introduces the property of an action *type*. Latter allows adding a custom remedation action.
 
 ## Explanation
 
