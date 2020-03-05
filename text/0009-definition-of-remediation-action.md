@@ -61,7 +61,7 @@ spec:
 
 ### Action types
 
-In this KEP, two types of an action are proposed:
+In this KEP, three types of an action are proposed:
 
 **1. keptn-service**: An action of type *keptn-service* has a corresponding action-provider, which is deployed and managed by Keptn. This action-provider takes care of executing the remediation action.
   * Benefit: DevOps has control over the deployed action-providers. 
@@ -70,6 +70,8 @@ In this KEP, two types of an action are proposed:
 **2. webhook**: A action of type *webhook* has no on-side (Keptn-managed) action-provider, but rather calls an endpoint from an external service. This service takes care of executing the remediation action.
   * Benefit: Any service that can execute an action can be triggered.
   * Disadvantage: DevOps has no control over the actions. 
+
+**3. keptn-built-in**: An action of type *keptn-built-in* is implemented in Keptn.
 
 ### Functionality
 
@@ -155,6 +157,8 @@ N/A
 ## Open questions
 
 - The name of action type *keptn-service* is subject to change. What is a better naming?
+
+- How can we model a "rollback" action? Is this the action type: *keptn-built-in* and a standard feature of the remedation-service?
 
 ## Future possibilities
 
