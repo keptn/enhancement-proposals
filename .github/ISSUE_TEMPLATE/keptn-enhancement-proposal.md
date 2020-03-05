@@ -1,3 +1,11 @@
+---
+name: Keptn Enhancement Proposal
+about: Create a Keptn Enhancement Proposal as an Issue
+title: ''
+labels: ''
+assignees: ''
+---
+
 # REPLACE this with your KEP title
 
 Short one-sentence summary, i.e., a sentence that would be appropriate for a [CHANGELOG](https://keepachangelog.com/) or release note.

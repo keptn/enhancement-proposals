@@ -37,9 +37,23 @@ On the other hand, they do not necessarily need to be used for such changes as:
 
 ## Writing a new proposal
 
+There are two options available for creating a KEP:
+
+* Forking the repo and creating a Pull Request
+* Creating an issue based on the KEP-template that contains the same content - we will then take care of the Pull Request
+
+**Preferred: Fork the repo and create a PR**
+
 1. [Fork](https://help.github.com/en/articles/fork-a-repo) the `keptn/enhancement-proposals` repo
 1. Copy `0000-template.md` into the [text/](text/) directory and rename it accordingly (e.g., to `XXXX-my-proposal-title.md`) - Please note that `XXXX` (ID of the KEP) needs to be replaced with the Pull Request ID later.
 1. Fill in the template. Put care into the details: It is important to present convincing motivation, demonstrate an understanding of the design's impact, and honestly assess the drawbacks and potential alternatives (feel free to adapt the template to your likings, if you feel that it is necessary or if it helps to improve readability).
+
+**Create an issue based on the KEP-template**
+
+1. [Create a new issue (based on the KEP-template)](https://github.com/keptn/enhancement-proposals/issues/new?assignees=&template=keptn-enhancement-proposal.md&title=KEP%20XXXX:%20Replace%20this%20with%20your%20awesome%20KEP%20title)
+1. Please note the ID of the issue and replace `XXXX` in the template with the issue ID.
+1. Fill in the template. Put care into the details: It is important to present convincing motivation, demonstrate an understanding of the design's impact, and honestly assess the drawbacks and potential alternatives (feel free to adapt the template to your likings, if you feel that it is necessary or if it helps to improve readability).
+1. Please note: For this KEP to be accepted, we will eventually create a Pull Request and merge it.
 
 ## Submitting a new proposal
 
