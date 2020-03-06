@@ -4,9 +4,9 @@ The built-in remediation actions in Keptn 0.6.0 have to become customizable.
 
 ## Motivation
 
-Automating operational tasks is a **core use-case** of Keptn. Consequently, means are provided that allow a service switching into a remediation mode when a problem for this service is detected. In this remediation mode, Keptn takes care of executing specified remediation actions. After the execution of one action, Keptn validates the effect of the performed remediation action to verify whether the problem is resolved. If it is not resolved, the next action gets triggered until no action is available. Finally, a not-resolved problem should be escalated. In the implementation of Keptn 0.6.0, this workflow is not supported and it is not possible to use custom remediation actions. 
+Automating operational tasks is a **core use-case** of Keptn. Consequently, means are provided that allow a service switching into a remediation mode when a problem for this service is detected. In this remediation mode, Keptn takes care of executing specified remediation actions. After the execution of one action, Keptn validates the effect of the performed remediation action to verify whether the problem is resolved. If it is not resolved, the next action gets triggered until no action is available. Finally, a not-resolved problem should be escalated. In the implementation of Keptn 0.6.0, this workflow is partly supported and it is not possible to use custom remediation actions. 
 
-To enable the mentioned use-case, this KEP proposes a behavioral change in configuring a remediation action for a service and it proposes a spec change that introduces the property of an action *type*. Latter allows adding a custom remedation action.
+To allow the mentioned use-case, this KEP proposes a behavioral change in configuring a remediation action for a service and it proposes a spec change that introduces the property of an action *type*. Latter allows adding a custom remedation action.
 
 ## Explanation
 
@@ -16,7 +16,7 @@ To enable the mentioned use-case, this KEP proposes a behavioral change in confi
 
 * Currently, a Dev can specify a remediation action for his/her service by adding a *remediation action* configuration to Keptn using the `keptn add-resource` command. In most cases, a remediation action is part of a new version of an artifact and available when the new version is built. -> Consequently, an action should be shipped along with the new artifact. 
 
-* The current spec does not allow specifying an action-provider. An action-provider is the service that is responsible for executing the action. -> Consequently, the spec change has to provide the option to clarify which service can execute the action.
+* The current spec does not allow specifying an *action-provider*. An action-provider is a service that is responsible for executing the action. -> Consequently, the spec change has to provide the option to clarify which service can execute the action.
 
 * Remediation actions are currently implemented in the remediation-service and a Dev can only select one of the implemented actions. This also goes along with the problem that it is not possible to use a custom action-provider. 
 
@@ -38,9 +38,8 @@ spec:
       actions:
         - action: togglefeature
           description: Toggle feature flag EnablePromotion from ON to OFF
-          type: keptn-service
           provider: unleash
-          parameters: 
+          values: 
             - EnablePromotion: off
 ```
 
@@ -55,36 +54,24 @@ spec:
 * **actions:** An array of *actions* that are executed in the given order.
   * **action**: A unique name of the remediation action. 
   * **description**: A short description of the action.
-  * **type:** The type of the action: **keptn-service**, **webhook**.
-  * **provider | hook:** If type *keptn-service* is selected, the service to call is specified by the **provider** property. If type *webhook* is selected, the endpoint to call is specified by the **hook** property.
-  * **parameters:** An array of individual `key:value` pairs used for executing the action by the action-provider. 
+  * **provider | hook:** This property specifies the target unit that executes the remedation action. 
+  * **values:** An array of individual `key:value` pairs used for executing the action by the action-provider. 
 
-### Action types
+### Provider | Hook
 
 In this KEP, three types of an action are proposed:
 
-**1. keptn-service**: An action of type *keptn-service* has a corresponding action-provider, which is deployed and managed by Keptn. This action-provider takes care of executing the remediation action.
-  * Benefit: DevOps has control over the deployed action-providers. 
-  * Disadvantage: The remediation action must be executable by the action-provider, otherwise a new version of the action-provider must be deployed. 
+**Provider**: When a user declares a provider, the service that excutes the action is managed by Keptn and part of the Keptn's uniform.
+  * Benefit: DevOps has control over the deployed providers. 
+  * Disadvantage: The remediation action must be executable by the provider, otherwise a new version of the provider must be deployed. 
 
-**2. webhook**: A action of type *webhook* has no on-side (Keptn-managed) action-provider, but rather calls an endpoint from an external service. This service takes care of executing the remediation action.
+**Hook**: When a user declares a hook, then Keptn will call no on-side (Keptn-managed) action provider, but rather calls an endpoint from an external service. This service takes care of executing the remediation action.
   * Benefit: Any service that can execute an action can be triggered.
   * Disadvantage: DevOps has no control over the actions. 
 
-**3. keptn-built-in**: An action of type *keptn-built-in* is implemented in Keptn.
-
 ### Functionality
 
-A developer can specify a *remediation action* configuration for his/her service in two ways:
-
-1. When onboarding a service:
-    ```console
-    keptn onboard service xyz --project=PROJECTNAME --service=SERVICENAME --chart=helm_chart.tgz
-            --remediation-actions=action.yaml
-    ```
-    > This way provides the inital version of a *remediation action* configuration.
-
-2. When sending a new-artifact event: 
+A developer can specify a *remediation action* configuration for his/her service when sending a new-artifact event: 
     ```console
     keptn send event new-artifact --project=PROJECTNAME --service=SERVICENAME --image=docker.io/keptnexamples/carts --tag=0.9.1
             --remediation-actions=action.yaml
@@ -136,17 +123,15 @@ spec:
       actions:
         - action: scaling
           description: Please provide a description for the remediation action.
-          type: keptn-service
           provider: # TBD
-          parameters: 
+          values: 
             - value: +1
     - problem: Failure rate increase
       actions:
         - action: featuretoggle
           description: Please provide a description for the remediation action.
-          type: keptn-service
           provider: unleash
-          parameters: 
+          values: 
             - EnablePromotion: off
 ```
 
@@ -156,12 +141,10 @@ N/A
 
 ## Open questions
 
-- The name of action type *keptn-service* is subject to change. What is a better naming?
-
-- How can we model a "rollback" action? Is this the action type: *keptn-built-in* and a standard feature of the remedation-service?
+- How can we model a "rollback" action? Is this the type: *keptn-built-in* and a standard feature of the remedation-service?
 
 ## Future possibilities
 
 - This KEP allows supporting multiple remediation actions for a service. 
 
-- The action type of a `container` would be a suggestion for future enhancements. Thus, a user can specify a container image that will be launched by Keptn before executing the action. 
+- Instead of a provider or hook, a `container` (as executable unit) would be a suggestion for future enhancements. Thus, a user can specify a container image that will be launched by Keptn before executing the action. 
