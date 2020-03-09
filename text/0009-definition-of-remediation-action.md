@@ -64,7 +64,7 @@ spec:
 * **spec:** Consists of the array `problems`. This array lists all problems for which a remediation action is provided.
 
 *Definition of a Problem:*
-* **problem:** A unique identifier of the problem. 
+* **problem:** A unique identifier of the problem or '*' as wildcard for any problem.
 * **actions:** An array of *actions* that are executed in the given order.
   * **action**: A unique name of the remediation action. 
   * **description**: A short description of the action.
