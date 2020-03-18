@@ -39,13 +39,15 @@ spec:
   problems: 
     - problem: Response time degradation
       actions:
-        - action: togglefeature
+        - name: 
+          action: togglefeature
           description: Toggle feature flag EnablePromotion from ON to OFF
           values: 
             - EnablePromotion: off
-    - problem: *
+    - problem: "*"
         actions:
-          - action: rollback
+          - name: 
+            action: rollback
             description: Roll my service back
             values:
               - Version: LastStable
@@ -58,17 +60,18 @@ spec:
 * **spec:** Consists of the array `problems`. This array lists all problems for which a remediation action is provided.
 
 *Definition of a Problem:*
-* **problem:** A unique identifier of the problem or a regular expression (RegEx) to capture different problem types.
+* **problem:** A unique identifier of the problem or * expression. When a * is set, the remediation workflows for any kind of problem gets triggered.
 * **actions:** An array of *actions* that are executed in the given order.
-  * **action**: A unique name of the remediation action. This name will be used for sending out an event, to which an action-provider has subscripted to.
+  * **name**: A unique name of the remediation action.
+  * **action**: This property specifies the action to execute. This property will work as selector (filter) for the action-provider. Thus, it allows restricting the action-provider of this action event.
   * **description**: A short description of the action.
   * **hook:** This property is optional. A hook allows to specify a custom endpoint to send the problem event to. If the response of this hook has a response code between 200 and 300, the action execution is considered as successful. In all other cases, it is considered as failed.  
   * **values:** An array of individual `key:value` pairs used for executing the action by the action-provider. 
 
-### Behaviour of Action providers and Hooks
+### Behaviour of Action-providers and Hooks
 
-**Default**: A provider gets triggered by an event and executes the remediation action.
-More precisely, a provider listens to `sh.keptn.event.remediation.[action].triggered` events and when the event is received, it has to execute the remediation action. All providers are managed by the Keptn's uniform.
+**Action-provider (Default)**: An action-provider gets triggered by an event and executes the remediation action.
+More precisely, an action-provider listens to `sh.keptn.event.remediation.action.triggered` events and when the event is received, it has to execute the remediation action. All providers are managed by the Keptn's uniform. The property `action` can be used as event selector. 
   * *Benefit*: DevOps have control over the deployed providers. 
   * *Disadvantage*: The remediation action has to register to Keptn events and has to send a `started` and `finished` event, which may be an overkill for simple, short-running remediation actions.
 
@@ -76,6 +79,7 @@ More precisely, a provider listens to `sh.keptn.event.remediation.[action].trigg
   * *Benefit*: Any service that can execute an action can be triggered. Synchronous communication using HTTP POSTs.
   * *Disadvantage*: DevOps have no control over the webhooks. 
 
+<!--
 ### Functionality
 
 A developer can specify a *remediation action* configuration for his/her service when sending a new-artifact event: 
@@ -84,6 +88,7 @@ A developer can specify a *remediation action* configuration for his/her service
             --remediation-actions=action.yaml
     ```
     > This way overrides the current *remediation action* configuration. For now, it is an override and no merge. In other words, a Developer can delete a remediation action by removing it from the config when sending a new artifact event.
+-->
 
 ### Refactoring
 
@@ -128,13 +133,15 @@ spec:
   problems: 
     - problem: Response time degradation
       actions:
-        - action: scaling
+        - name: 
+          action: scaling
           description: Please provide a description for the remediation action.
           values: 
             - value: +1
     - problem: Failure rate increase
       actions:
-        - action: featuretoggle
+        - name:
+          action: featuretoggle
           description: Please provide a description for the remediation action.
           values: 
             - EnablePromotion: off
@@ -148,6 +155,7 @@ N/A
 
 - How can we model a "rollback" action? Is this the type: *keptn-built-in* and a standard feature of the remedation-service?
 - How can the user write remediation actions for unknown problems?
+- Do we need the `name` property for an action?
 
 ## Future possibilities
 
