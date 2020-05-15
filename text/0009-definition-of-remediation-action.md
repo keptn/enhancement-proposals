@@ -43,14 +43,14 @@ spec:
           action: togglefeature
           description: Toggle feature flag EnablePromotion from ON to OFF
           values: 
-            - EnablePromotion: off
+            EnablePromotion: off
     - problem: "*"
         actions:
           - name: 
             action: rollback
             description: Roll my service back
             values:
-              - Version: LastStable
+              Version: LastStable
 ```
 
 *Meta-data:*
@@ -66,7 +66,7 @@ spec:
   * **action**: This property specifies the action to execute. This property will work as selector (filter) for the action-provider. Thus, it allows restricting the action-provider of this action event.
   * **description**: A short description of the action.
   * **hook:** This property is optional. A hook allows to specify a custom endpoint to send the problem event to. If the response of this hook has a response code between 200 and 300, the action execution is considered as successful. In all other cases, it is considered as failed.  
-  * **values:** An array of individual `key:value` pairs used for executing the action by the action-provider. 
+  * **values:** An object of individual `key:value` pairs used for executing the action by the action-provider. 
 
 ### Behaviour of Action-providers and Hooks
 
@@ -137,14 +137,14 @@ spec:
           action: scaling
           description: Please provide a description for the remediation action.
           values: 
-            - value: +1
+            value: +1
     - problem: Failure rate increase
       actions:
         - name:
           action: featuretoggle
           description: Please provide a description for the remediation action.
           values: 
-            - EnablePromotion: off
+            EnablePromotion: off
 ```
 
 ## Prior art and alternatives
