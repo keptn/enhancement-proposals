@@ -17,7 +17,7 @@ To allow the mentioned use-case, this KEP proposes a behavioral change in config
 
 * Remediation actions are currently implemented in the `remediation-service` and a Dev can only select one of the implemented actions. This also goes along with the problem that it is not possible to use a custom action-provider. (An action-provider is a service that is responsible for executing the action.)
 
-* The `remediation-service` currently only allows to execute one action per problem. -> It should be possible to execute multiple actions as long as the problem is unresolved.
+* The `remediation-service` currently only allows to execute one action per problem. -> It should be possible to execute multiple actions as long as the problem is unresolved (open).
 
 * In order to write the remediation file, the user has to know upfront which problems may occur. Even more difficult, he/she needs to know the exact name of the problem in order to formulate the remediation file. -> The matching from the problem to the remediation action should be more generic.
 
@@ -37,20 +37,20 @@ metadata:
   name: remediation-service-abc
 spec:
   problems: 
-    - problem: Response time degradation
-      actions:
-        - name: 
-          action: togglefeature
-          description: Toggle feature flag EnablePromotion from ON to OFF
-          values: 
-            EnablePromotion: off
-    - problem: "*"
-        actions:
-          - name: 
-            action: rollback
-            description: Roll my service back
-            values:
-              Version: LastStable
+  - problem: "Response time degradation"
+    actions:
+    - name: 
+      action: togglefeature
+      description: Toggle feature flag EnablePromotion from ON to OFF
+      values: 
+        EnablePromotion: off
+  - problem: "*"
+    actions:
+    - name: 
+      action: rollback
+      description: Roll my service back
+      values:
+        Version: LastStable
 ```
 
 *Meta-data:*
@@ -71,13 +71,24 @@ spec:
 ### Behaviour of Action-providers and Hooks
 
 **Action-provider (Default)**: An action-provider gets triggered by an event and executes the remediation action.
-More precisely, an action-provider listens to `sh.keptn.event.remediation.action.triggered` events and when the event is received, it has to execute the remediation action. All providers are managed by the Keptn's uniform. The property `action` can be used as event selector. 
+More precisely, an action-provider listens to `sh.keptn.event.action.triggered` events and when the event is received, it has to execute the remediation action. The property `action` can be used as event selector. 
   * *Benefit*: DevOps have control over the deployed providers. 
   * *Disadvantage*: The remediation action has to register to Keptn events and has to send a `started` and `finished` event, which may be an overkill for simple, short-running remediation actions.
 
 **Hook**: Remediation actions can be triggered using hooks. When a user declares a hook, Keptn calls this endpoint and waits for the HTTP response code. If the response code is between 200 and 300, the action is considered to be successful executed. Note that these hooks are not managed by Keptn.
   * *Benefit*: Any service that can execute an action can be triggered. Synchronous communication using HTTP POSTs.
   * *Disadvantage*: DevOps have no control over the webhooks. 
+
+**Example of a hook:**
+```yaml
+actions:
+- name: 
+  action: togglefeature
+  description: Toggle feature flag EnablePromotion from ON to OFF
+  hook: https://my-remediation.com/toogle
+  values: 
+    EnablePromotion: off
+```
 
 <!--
 ### Functionality
@@ -108,7 +119,7 @@ This KEP breaks the implementation of Keptn 0.6.0:
 
 ### Upgrade path from Remediation Spec 0.1.2 to 0.2.0
 
-The *remediation action* specification version 0.1.2 as used by Keptn 0.5.0 and 0.6.0 (last supported Keptn versions) has to be migrated to the new specification. Thus, the following spec:
+The *remediation action* specification version 0.1.2 as used by Keptn 0.5.0 and 0.6.2 (last supported Keptn versions) has to be migrated to the new specification. Thus, the following spec:
 
 ```yaml
 remediations:
@@ -131,20 +142,20 @@ metadata:
   name: remedation-service-abc
 spec:
   problems: 
-    - problem: Response time degradation
-      actions:
-        - name: 
-          action: scaling
-          description: Please provide a description for the remediation action.
-          values: 
-            value: +1
-    - problem: Failure rate increase
-      actions:
-        - name:
-          action: featuretoggle
-          description: Please provide a description for the remediation action.
-          values: 
-            EnablePromotion: off
+  - problem: Response time degradation
+    actions:
+    - name: 
+      action: scaling
+      description: Please provide a description for the remediation action.
+      values: 
+        value: +1
+  - problem: Failure rate increase
+    actions:
+    - name:
+      action: featuretoggle
+      description: Please provide a description for the remediation action.
+      values: 
+        EnablePromotion: off
 ```
 
 ## Prior art and alternatives
@@ -153,9 +164,9 @@ N/A
 
 ## Open questions
 
-- How can we model a "rollback" action? Is this the type: *keptn-built-in* and a standard feature of the remedation-service?
-- How can the user write remediation actions for unknown problems?
-- Do we need the `name` property for an action?
+- [ ] How can we model a "rollback" action? Is this the type: *keptn-built-in* and a standard feature of the remedation-service?
+- [ ] How can the user write remediation actions for unknown problems?
+- [ ] Do we need the `name` property for an action?
 
 ## Future possibilities
 
