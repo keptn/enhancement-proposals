@@ -38,6 +38,7 @@ metadata:
 spec:
   problems: 
   - problem: "Response time degradation"
+    state: open
     actions:
     - name: 
       action: togglefeature
@@ -45,6 +46,7 @@ spec:
       values: 
         EnablePromotion: off
   - problem: "*"
+    state: open
     actions:
     - name: 
       action: rollback
@@ -61,6 +63,7 @@ spec:
 
 *Definition of a Problem:*
 * **problem:** A unique identifier of the problem or * expression. When a * is set, the remediation workflows for any kind of problem gets triggered.
+* **state:** The status of the problem, which can be either *open* or *resolved*.
 * **actions:** An array of *actions* that are executed in the given order.
   * **name**: A unique name of the remediation action.
   * **action**: This property specifies the action to execute. This property will work as selector (filter) for the action-provider. Thus, it allows restricting the action-provider of this action event.
@@ -79,7 +82,8 @@ More precisely, an action-provider listens to `sh.keptn.event.action.triggered` 
   * *Benefit*: Any service that can execute an action can be triggered. Synchronous communication using HTTP POSTs.
   * *Disadvantage*: DevOps have no control over the webhooks. 
 
-**Example of a hook:**
+*Example for a hook:*
+
 ```yaml
 actions:
 - name: 
@@ -164,9 +168,10 @@ N/A
 
 ## Open questions
 
-- [ ] How can we model a "rollback" action? Is this the type: *keptn-built-in* and a standard feature of the remedation-service?
+- [ ] The `state` property indicates the status of a problem. This property could be moved to an action, as proposed here: https://github.com/keptn/keptn/issues/1734
+- [ ] Do we need the `name` property for an action, since it might be redundant information to the `action` property.
+- [ ] How can we model a *rollback* action? Is this the type: *keptn-built-in* and a standard feature of the remedation-service?
 - [ ] How can the user write remediation actions for unknown problems?
-- [ ] Do we need the `name` property for an action?
 
 ## Future possibilities
 
