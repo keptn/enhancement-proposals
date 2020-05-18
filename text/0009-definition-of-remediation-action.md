@@ -63,7 +63,7 @@ spec:
 
 *Definition of a Problem:*
 * **problem:** A unique identifier of the problem or * expression. When a * is set, the remediation workflows for any kind of problem gets triggered.
-* **state:** The status of the problem, which can be either *open* or *resolved*.
+* **state:** This property is optional. The status of the problem, which can be either *open* or *resolved*. Per default and when not declared, state is set to `open`. 
 * **actions:** An array of *actions* that are executed in the given order.
   * **name**: A unique name of the remediation action.
   * **action**: This property specifies the action to execute. This property will work as selector (filter) for the action-provider. Thus, it allows restricting the action-provider of this action event.
@@ -168,7 +168,7 @@ N/A
 
 ## Open questions
 
-- [ ] The `state` property indicates the status of a problem. This property could be moved to an action, as proposed here: https://github.com/keptn/keptn/issues/1734
+- [ ] The `state` property indicates the status of a problem, which can be declared but is not required (default is `state: open`). This property could be moved to an action, as proposed here: https://github.com/keptn/keptn/issues/1734 Is it a problem or action property?
 - [ ] Do we need the `name` property for an action, since it might be redundant information to the `action` property.
 - [ ] How can we model a *rollback* action? Is this the type: *keptn-built-in* and a standard feature of the remedation-service?
 - [ ] How can the user write remediation actions for unknown problems?
