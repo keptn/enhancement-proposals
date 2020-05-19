@@ -7,7 +7,7 @@ The built-in remediation actions in Keptn 0.6.0 have to become customizable.
 Automating operational tasks is a core use-case of Keptn. Consequently, means should be provided to
 trigger a multi-step remediation workflow. In this remediation workflow, Keptn takes care of executing specified remediation actions. After the execution of one action, Keptn validates the effect of the performed remediation action to verify whether the problem is resolved. If it is not resolved, the next action gets triggered until no action is available. Finally, a not-resolved problem should be escalated. In the implementation of Keptn 0.6.0, this workflow is partly supported and it is not possible to use custom remediation actions. 
 
-To allow the mentioned use-case, this KEP proposes a behavioral change in configuring a remediation action for a service and it proposes a spec change. Latter allows adding a custom remedation action.
+To allow the mentioned use-case, this KEP proposes a behavioral change in configuring a remediation action for a service and it proposes a spec change. Latter allows adding a custom remediation action.
 
 ## Explanation
 
@@ -17,9 +17,9 @@ To allow the mentioned use-case, this KEP proposes a behavioral change in config
 
 * Remediation actions are currently implemented in the `remediation-service` and a Dev can only select one of the implemented actions. This also goes along with the problem that it is not possible to use a custom action-provider. (An action-provider is a service that is responsible for executing the action.)
 
-* The `remediation-service` currently only allows to execute one action per problem. -> It should be possible to execute multiple actions as long as the problem is unresolved (open).
+* The `remediation-service` currently only allows executing one action per problem. -> It should be possible to execute multiple actions as long as the problem is unresolved (open).
 
-* In order to write the remediation file, the user has to know upfront which problems may occur. Even more difficult, he/she needs to know the exact name of the problem in order to formulate the remediation file. -> The matching from the problem to the remediation action should be more generic.
+* To write the remediation file, the user has to know upfront which problems may occur. Even more difficult, he/she needs to know the exact name of the problem to formulate the remediation file. -> The matching from the problem to the remediation action should be more generic.
 
 * The remediation action always requires a problem name. -> The user has no means to formulate a remediation action regardless of the problem, i.e., make a rollback for any problem.
 
@@ -31,22 +31,22 @@ This KEP proposes a spec change of the *remediation action* configuration. To ge
 
 ```yaml
 ---
-version: 0.2.0
-kind: Remediation
+version: 0.2.0
+kind: Remediation
 metadata:
   name: remediation-service-abc
 spec:
   problems: 
-  - problemType: Response time degradation
+  - problemType: Response time degradation
     actionsOnOpen:
-    - name: Toogle feature flag
+    - name: Toogle feature flag
       action: togglefeature
       description: Toggle feature flag EnablePromotion from ON to OFF.
-      values: 
+      values: 
         EnablePromotion: off
   - problemType: "*"
     actionsOnOpen:
-    - name: Roll back to previos version
+    - name: Roll back to previous version
       action: rollback
       description: Roll service back to previous version with passed evaluation result.
       values:
@@ -64,31 +64,31 @@ spec:
 * **problemType:** A unique identifier of the problem type or the * expression. When a * is configured, the remediation workflows for any kind of problem gets triggered.
 * **actionsOnOpen:** An array of *actions* for problem with state open. These actions are executed in the given order.
   * **name**: A unique name of the remediation action. This name is used as display name in the Keptn Bridge.
-  * **action**: This property specifies the action to execute. This property will work as selector (filter) for the action-provider. Thus, it allows restricting the action-provider of this action event.
+  * **action**: This property specifies the action to execute. This property will work as a selector (filter) for the action-provider. Thus, it allows restricting the action-provider of this action event.
   * **description**: A description of the action to provide more details about the action and the specified action values.
-  * **hook:** This property is optional. A hook allows to specify a custom endpoint to send the problem event to. If the response of this hook has a response code between 200 and 300, the action execution is considered as successful. In all other cases, it is considered as failed.  
+  * **hook:** This property is optional. A hook allows specifying a custom endpoint to send the problem event to. If the response of this hook has a response code between 200 and 300, the action execution is considered as successful. In all other cases, it is considered as failed.  
   * **values:** An object of individual `key:value` pairs used for executing the action by the action-provider. 
 
 ### Behaviour of Action-providers and Hooks
 
 **Action-provider (Default)**: An action-provider gets triggered by an event and executes the remediation action.
-More precisely, an action-provider listens to `sh.keptn.event.action.triggered` events and when the event is received, it has to execute the remediation action. The property `action` can be used as event selector. 
-  * *Benefit*: DevOps have control over the deployed providers. 
+More precisely, an action-provider listens to `sh.keptn.event.action.triggered` events and when the event is received, it has to execute the remediation action. The property `action` can be used as an event selector. 
+  * *Benefit*: DevOps engineers have control over the deployed providers. 
   * *Disadvantage*: The remediation action has to register to Keptn events and has to send a `started` and `finished` event, which may be an overkill for simple, short-running remediation actions.
 
-**Hook**: Remediation actions can be triggered using hooks. When a user declares a hook, Keptn calls this endpoint and waits for the HTTP response code. If the response code is between 200 and 300, the action is considered to be successful executed. Note that these hooks are not managed by Keptn.
+**Hook**: Remediation actions can be triggered using hooks. When a user declares a hook, Keptn calls this endpoint and waits for the HTTP response code. If the response code is between 200 and 300, the action is considered to be successfully executed. Note that these hooks are not managed by Keptn.
   * *Benefit*: Any service that can execute an action can be triggered. Synchronous communication using HTTP POSTs.
-  * *Disadvantage*: DevOps have no control over the webhooks. 
+  * *Disadvantage*: DevOps engineers have no control over the webhooks. 
 
 *Example for a hook:*
 
 ```yaml
 actions:
-- name: Toogle feature flag
+- name: Toogle feature flag
   action: togglefeature
   description: Toggle feature flag EnablePromotion from ON to OFF
   hook: https://my-remediation.com/toogle
-  values: 
+  values: 
     EnablePromotion: off
 ```
 
@@ -138,25 +138,25 @@ remediations:
 migrates to ...
 
 ```yaml
-version: 0.2.0
-kind: Remediation
+version: 0.2.0
+kind: Remediation
 metadata:
   name: remedation-service-abc
 spec:
   problems: 
-  - problemType: Response time degradation
-    actionsOnOpen:
-    - name: Scaling ReplicaSet by 1
+  - problemType: Response time degradation
+    actionsOnOpen:
+    - name: Scaling ReplicaSet by 1
       action: scaling
       description: Scaling the ReplicaSet of a Kubernetes Deployment by 1.
-      values: 
+      values: 
         value: +1
-  - problemType: Failure rate increase
-    actionsOnOpen:
-    - name: Toogle feature flag
+  - problemType: Failure rate increase
+    actionsOnOpen:
+    - name: Toogle feature flag
       action: featuretoggle
       description: Toggle feature flag EnablePromotion from ON to OFF.
-      values: 
+      values: 
         EnablePromotion: off
 ```
 
@@ -168,10 +168,10 @@ N/A
 
 - [ ] Should an `actionsOnResolved` property be supported?
 
-- [ ] How can we model a *rollback* action? Is this the type: *keptn-built-in* and a standard feature of the remedation-service?
+- [ ] How can we model a *rollback* action? Is this the type: *keptn-built-in* and a standard feature of the remediation-service?
 
 ## Future possibilities
 
 - This KEP allows supporting multiple remediation actions for a service. 
 
-- Instead of a provider or hook, a `container` (as executable unit) would be a suggestion for future enhancements. Thus, a user can specify a container image that will be launched by Keptn before executing the action. 
+- Instead of a provider or hook, a `container` (as an executable unit) would be a suggestion for future enhancements. Thus, a user can specify a container image that will be launched by Keptn before executing the action. 
