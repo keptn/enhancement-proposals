@@ -37,37 +37,35 @@ metadata:
   name: remediation-service-abc
 spec:
   problems: 
-  - problem: "Response time degradation"
-    state: open
-    actions:
-    - name: 
+  - problemType: Response time degradation
+    actionsOnOpen:
+    - name: Toogle feature flag
       action: togglefeature
-      description: Toggle feature flag EnablePromotion from ON to OFF
+      description: Toggle feature flag EnablePromotion from ON to OFF.
       values: 
         EnablePromotion: off
-  - problem: "*"
-    state: open
-    actions:
-    - name: 
+  - problemType: "*"
+    actionsOnOpen:
+    - name: Roll back to previos version
       action: rollback
-      description: Roll my service back
+      description: Roll service back to previous version with passed evaluation result.
       values:
-        Version: LastStable
+        version: previous
+        evaluationResult: passed
 ```
 
 *Meta-data:*
 * **version**: The version of the remediation specification. 
-* **kind**: Is set to `Remediation`.
+* **kind**: Set to `Remediation`.
 * **metadata:** Contains at least the property *name*, which declares a unique name for the remediation configuration.
 * **spec:** Consists of the array `problems`. This array lists all problems for which a remediation action is provided.
 
 *Definition of a Problem:*
-* **problem:** A unique identifier of the problem or * expression. When a * is set, the remediation workflows for any kind of problem gets triggered.
-* **state:** This property is optional. The status of the problem, which can be either *open* or *resolved*. Per default and when not declared, state is set to `open`. 
-* **actions:** An array of *actions* that are executed in the given order.
-  * **name**: A unique name of the remediation action.
+* **problemType:** A unique identifier of the problem type or the * expression. When a * is configured, the remediation workflows for any kind of problem gets triggered.
+* **actionsOnOpen:** An array of *actions* for problem with state open. These actions are executed in the given order.
+  * **name**: A unique name of the remediation action. This name is used as display name in the Keptn Bridge.
   * **action**: This property specifies the action to execute. This property will work as selector (filter) for the action-provider. Thus, it allows restricting the action-provider of this action event.
-  * **description**: A short description of the action.
+  * **description**: A description of the action to provide more details about the action and the specified action values.
   * **hook:** This property is optional. A hook allows to specify a custom endpoint to send the problem event to. If the response of this hook has a response code between 200 and 300, the action execution is considered as successful. In all other cases, it is considered as failed.  
   * **values:** An object of individual `key:value` pairs used for executing the action by the action-provider. 
 
@@ -86,7 +84,7 @@ More precisely, an action-provider listens to `sh.keptn.event.action.triggered` 
 
 ```yaml
 actions:
-- name: 
+- name: Toogle feature flag
   action: togglefeature
   description: Toggle feature flag EnablePromotion from ON to OFF
   hook: https://my-remediation.com/toogle
@@ -107,7 +105,7 @@ A developer can specify a *remediation action* configuration for his/her service
 
 ### Refactoring
 
-The current implementation of the `remediation-service` has built-in actions, like the toggling of a feature flag, or scaling a pod. The feature flag toggling, for example, need to be extracted into a service (`unleash-service`) that is then able to handle the action.
+The current implementation of the `remediation-service` has built-in actions, like the toggling of a feature flag, or scaling the ReplicaSet of a deployment. The feature flag toggling, for example, need to be extracted into a service (`unleash-service`) that is then able to handle the action.
 
 ## Trade-offs and mitigations
 
@@ -146,18 +144,18 @@ metadata:
   name: remedation-service-abc
 spec:
   problems: 
-  - problem: Response time degradation
-    actions:
-    - name: 
+  - problemType: Response time degradation
+    actionsOnOpen:
+    - name: Scaling ReplicaSet by 1
       action: scaling
-      description: Please provide a description for the remediation action.
+      description: Scaling the ReplicaSet of a Kubernetes Deployment by 1.
       values: 
         value: +1
-  - problem: Failure rate increase
-    actions:
-    - name:
+  - problemType: Failure rate increase
+    actionsOnOpen:
+    - name: Toogle feature flag
       action: featuretoggle
-      description: Please provide a description for the remediation action.
+      description: Toggle feature flag EnablePromotion from ON to OFF.
       values: 
         EnablePromotion: off
 ```
@@ -168,10 +166,9 @@ N/A
 
 ## Open questions
 
-- [ ] The `state` property indicates the status of a problem, which can be declared but is not required (default is `state: open`). This property could be moved to an action, as proposed here: https://github.com/keptn/keptn/issues/1734 Is it a problem or action property?
-- [ ] Do we need the `name` property for an action, since it might be redundant information to the `action` property.
+- [ ] Should an `actionsOnResolved` property be supported?
+
 - [ ] How can we model a *rollback* action? Is this the type: *keptn-built-in* and a standard feature of the remedation-service?
-- [ ] How can the user write remediation actions for unknown problems?
 
 ## Future possibilities
 
