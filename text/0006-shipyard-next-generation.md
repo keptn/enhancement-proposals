@@ -52,22 +52,22 @@ metadata:
   name: shipyard-abc
 spec:
   stages:
-    - name: "hardening"
-      workflows:
-        - name: artifact-delivery
-          listen:   
-            - dev.artifact-delivery.finished
-          tasks:
-            - update:
-            - deployment:
-                strategy: blue_green
-            - test:
-                kind: functional
-            - evaluation: 
-            - test:
-                kind: performance
-            - evaluation:
-            - release: 
+  - name: "hardening"
+    workflows:
+    - name: artifact-delivery
+      listen:   
+      - dev.artifact-delivery.finished
+      tasks:
+      - deployment:
+          strategy: blue_green
+          traffic: 100
+      - test:
+          kind: functional
+      - evaluation: 
+      - test:
+          kind: performance
+      - evaluation:
+      - release: 
 ```
 
 *Meta-data:*
@@ -87,7 +87,7 @@ spec:
 * **tasks:** An array of tasks executed by the workflow in the declared order.
 
 *Definition of Task:*
-* Reserved key tasks are: **update**, **deployment**, **test**, **evaluate**, **release**, **rollback**
+* Reserved key tasks are: **deployment**, **test**, **evaluate**, **release**, **remediation**
 * *labels* (`optional`): Task properties as individual `key:value` pairs. These labels precise the task and are consumed by the unit (Keptn-service) that executes the task. 
  
 ### Functionality
@@ -99,7 +99,7 @@ spec:
 1. Workflow triggers: The array *listen* contains all *domain events*(*) and workflow events with state finished to start this workflow, but this array is optional. If it is not set, a workflow can be started with an event of type: `[workflow.name].triggered`
     * (*) Domain event: *An event that occurred in the business process, written in past tense; [see](https://en.wikipedia.org/wiki/Event_storming)*. This is fired by a human or tool to inform about a certain situation. For example, a `problem.open` event is fired by a monitoring tool when a service runs in a problem mode.
 
-1. Task events: For each task, a `[task].triggered` event is sent by Keptn's control plane. Those Keptn-services that have a subscription on this event, will react with a `[task].started` event, perform their functions, and finally confirm their execution with a `[task].finished`. E.g., for the *test* task, the following events occurre:
+1. Task events: For each task, a `[task].triggered` event is sent by the control plane. Those Keptn-services that have a subscription on this event, will react with a `[task].started` event, perform their functions, and finally confirm their execution with a `[task].finished`. E.g., for the *test* task, the following events occurre:
     * `test.triggered`
       * `test.started`
       * `test.finished`
@@ -117,14 +117,14 @@ While the `matchLabels` allows configuring a selector on a `key` with exactly on
 ```yaml
 rollback:
   listen:
-    - hardening.deployment.finished:
-        selector:
-          matchLabels:
-            status: failed
-    - hardening.release.finished:
-        selector:
-          matchExpressions:
-            - {key: status, operator: In, values: [warning, failed]}
+  - hardening.deployment.finished:
+      selector:
+        matchLabels:
+          status: failed
+  - hardening.release.finished:
+      selector:
+        matchExpressions:
+          - {key: status, operator: In, values: [warning, failed]}
   tasks:
   - rollback:
 ```
@@ -147,7 +147,8 @@ Before the shipyard controller sends out a `[task].triggered` event for a specif
   ...
   "data": {
     "deployment": {
-      "strategy": "blue_green"
+      "strategy": "blue_green",
+      "traffic": "100",
     }
   }
 }
@@ -162,6 +163,7 @@ Before the shipyard controller sends out a `[task].triggered` event for a specif
     "data": {
       "deployment": {
         "strategy": "blue_green",
+        "traffic": "100",
         "deploymentURI":"https://my-service.domain.com/" // Property added by Keptn-service
       }
     }
@@ -173,10 +175,10 @@ Before the shipyard controller sends out a `[task].triggered` event for a specif
     - name: deployment-service
       image: keptn/helm-service:0.6.0
       events:
-        - deployment.triggered:
-          selector:
-            matchExpressions:
-              - {key: strategy, operator: In, values: [direct, blue_green]}
+      - deployment.triggered:
+        selector:
+          matchExpressions:
+          - {key: strategy, operator: In, values: [direct, blue_green]}
   ```
 
 * The shipyard controller merges the reserved spaces of a `[task-xyz].triggered`, `[task-xyz].started` and `[task-xyz].finished` event. If, for example, the `deployment.triggered` event contains `strategy:blue_green` and the `deployment.finished` event contains `deploymentURI:xyz` in the reserved space, the shipyard controller merges the the reserved space, before sending the next `[test].triggered`: 
@@ -187,6 +189,7 @@ Before the shipyard controller sends out a `[task].triggered` event for a specif
     "data": {
       "deployment": {
         "strategy": "blue_green",
+        "traffic": "100",
         "deploymentURI":"https://my-service.domain.com/" // Property added by Keptn-service
       }
       "test": {
@@ -211,15 +214,15 @@ The shipyard specification version 0.1.2 as used by Keptn 0.5.0 and 0.6.0 (last 
 
 ```yaml
 stages:
-  - name: "dev"
-    deployment_strategy: "direct"
-    test_strategy: "functional"
-  - name: "staging"
-    deployment_strategy: "blue_green_service"
-    test_strategy: "performance"
-  - name: "production"
-    deployment_strategy: "blue_green_service"
-    remediation_strategy: "automated"
+- name: "dev"
+  deployment_strategy: "direct"
+  test_strategy: "functional"
+- name: "staging"
+  deployment_strategy: "blue_green_service"
+  test_strategy: "performance"
+- name: "production"
+  deployment_strategy: "blue_green_service"
+  remediation_strategy: "automated"
 ```
 
 ... migrates to:
@@ -232,63 +235,58 @@ metadata:
   name: shipyard
 spec:
   stages:
-    - name: "dev"
-      workflows:
-        - name: artifact-delivery: 
-          listen:   # from
-            - ### config changed
-          tasks:
-            - update:
-            - deployment:
-                strategy: direct
-            - test:
-                kind: functional
-            - evaluation: 
-            - release: 
+  - name: "dev"
+    workflows:
+    - name: artifact-delivery
+      tasks:
+      - deployment:
+          strategy: direct
+      - test:
+          kind: functional
+      - evaluation: 
+      - release: 
 
-    - name: "hardening"
-      workflows:
-        artifact-delivery: 
-          listen:
-            - dev.artifact-delivery.finished
-          tasks:
-            - update:
-            - deployment:
-                strategy: blue_green
-            - test:
-                kind: performance
-            - evaluation:
-            - release:
+  - name: "hardening"
+    workflows:
+    - name: artifact-delivery
+      listen:
+      - dev.artifact-delivery.finished
+      tasks:
+      - deployment:
+          strategy: blue_green
+      - test:
+          kind: performance
+      - evaluation:
+      - release:
         
-        rollback:
-          listen:
-            - hardening.artifact-delivery.finished:
-                selector:
-                  matchLabels:
-                    status: failed
-          tasks:
-          - rollback:
+    - name: rollback
+      listen:
+      - hardening.artifact-delivery.finished:
+          selector:
+            matchLabels:
+              status: failed
+      tasks:
+      - rollback:
     
-    - name: "production"
-      workflows:
-        artifact-delivery: 
-          listen:
-            - hardening.artifact-delivery.finished
-          tasks:
-            - update:
-            - deployment:
-                strategy: blue_green
-            - release:
+  - name: "production"
+    workflows:
+    - name: artifact-delivery 
+      listen:
+      - hardening.artifact-delivery.finished
+      tasks:
+      - deployment:
+          strategy: blue_green
+      - release:
       
-        remediation:  ## Subject to change
-          listen: 
-            - production.problem.open            #(smart default)
-            - production.remediation.in-progress #(smart default)
-          tasks:
-            - remediation:
-            - test:
-                kind: real_user
-            - evaluation:
+    - name: remediation
+      listen: 
+      - production.problem.open            #(smart default)
+      - production.remediation.in-progress #(smart default)
+      tasks:
+      - remediation:
+      - test:
+          kind: real_user
+      - evaluation:
 ```
 
 ## Open questions
