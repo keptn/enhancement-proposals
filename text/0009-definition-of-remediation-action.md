@@ -17,7 +17,7 @@ To allow the mentioned use-case, this KEP proposes a behavioral change in config
 
 * Remediation actions are currently implemented in the `remediation-service` and a Dev can only select one of the implemented actions. This also goes along with the problem that it is not possible to use a custom action-provider. (An action-provider is a service that is responsible for executing the action.)
 
-* The `remediation-service` currently only allows executing one action per problem. -> It should be possible to execute multiple actions as long as the problem is unresolved (open).
+* The `remediation-service` allows executing one action per problem. -> It should be possible to execute multiple actions as long as the problem is unresolved (open).
 
 * To write the remediation file, the user has to know upfront which problems may occur. Even more difficult, he/she needs to know the exact name of the problem to formulate the remediation file. -> The matching from the problem to the remediation action should be more generic.
 
@@ -27,7 +27,7 @@ To allow the mentioned use-case, this KEP proposes a behavioral change in config
 
 ### Specification
 
-This KEP proposes a spec change of the *remediation action* configuration. To get started, the following example of a *remediation action* is provided: 
+This KEP proposes a spec change of the *remediation* configuration. To get started, the following example of a *remediation* config is provided: 
 
 ```yaml
 ---
@@ -36,20 +36,20 @@ kind: Remediation
 metadata:
   name: remediation-service-abc
 spec:
-  problems: 
+  remediations: 
   - problemType: Response time degradation
     actionsOnOpen:
     - name: Toogle feature flag
       action: togglefeature
       description: Toggle feature flag EnablePromotion from ON to OFF.
-      values: 
+      value: 
         EnablePromotion: off
-  - problemType: "*"
+  - problemType: default
     actionsOnOpen:
     - name: Roll back to previous version
       action: rollback
       description: Roll service back to previous version with passed evaluation result.
-      values:
+      value:
         version: previous
         evaluationResult: passed
 ```
@@ -57,17 +57,17 @@ spec:
 *Meta-data:*
 * **version**: The version of the remediation specification. 
 * **kind**: Set to `Remediation`.
-* **metadata:** Contains at least the property *name*, which declares a unique name for the remediation configuration.
-* **spec:** Consists of the array `problems`. This array lists all problems for which a remediation action is provided.
+* **metadata:** Contains at least the property *name*, which declares a unique name for the remediation config.
+* **spec:** Consists of the array `remediations`. This array lists all problems for which a remediation action is provided.
 
 *Definition of a Problem:*
-* **problemType:** A unique identifier of the problem type or the * expression. When a * is configured, the remediation workflows for any kind of problem gets triggered.
+* **problemType:** A unique identifier of the problem type or the `default` value. When a `default` value is configured, the remediation workflow for any kind of problem gets triggered.
 * **actionsOnOpen:** An array of *actions* for problem with state open. These actions are executed in the given order.
   * **name**: A unique name of the remediation action. This name is used as display name in the Keptn Bridge.
   * **action**: This property specifies the action to execute. This property will work as a selector (filter) for the action-provider. Thus, it allows restricting the action-provider of this action event.
   * **description**: A description of the action to provide more details about the action and the specified action values.
   * **hook:** This property is optional. A hook allows specifying a custom endpoint to send the problem event to. If the response of this hook has a response code between 200 and 300, the action execution is considered as successful. In all other cases, it is considered as failed.  
-  * **values:** An object of individual `key:value` pairs used for executing the action by the action-provider. 
+  * **value:** An object of individual `key:value` pairs used for executing the action by the action-provider. 
 
 ### Behaviour of Action-providers and Hooks
 
@@ -80,7 +80,7 @@ More precisely, an action-provider listens to `sh.keptn.event.action.triggered` 
   * *Benefit*: Any service that can execute an action can be triggered. Synchronous communication using HTTP POSTs.
   * *Disadvantage*: DevOps engineers have no control over the webhooks. 
 
-*Example for a hook:*
+*Example of a hook:*
 
 ```yaml
 actions:
@@ -143,20 +143,20 @@ kind: Remediation
 metadata:
   name: remedation-service-abc
 spec:
-  problems: 
+  remediations: 
   - problemType: Response time degradation
     actionsOnOpen:
     - name: Scaling ReplicaSet by 1
       action: scaling
       description: Scaling the ReplicaSet of a Kubernetes Deployment by 1.
-      values: 
-        value: +1
+      value: 
+        increment: +1
   - problemType: Failure rate increase
     actionsOnOpen:
     - name: Toogle feature flag
       action: featuretoggle
       description: Toggle feature flag EnablePromotion from ON to OFF.
-      values: 
+      value: 
         EnablePromotion: off
 ```
 
