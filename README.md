@@ -58,7 +58,7 @@ There are two options available for creating a KEP:
 ## Submitting a new proposal
 
 * A KEP is `proposed` by posting it as a Pull Request (PR). Once the PR is created, update the KEP file name to use the PR ID as the KEP ID.
-* A KEP is `approved` after a number of [official reviewers](CODEOWNERS) github-approve the PR (this number might change over time). The RFC is then merged.
+* A KEP is `approved` after a number of [official reviewers](CODEOWNERS) github-approve the PR (this number might change over time). The KEP is then merged.
 * If a KEP is `rejected` or `withdrawn`, the PR is closed. Note that these KEP submissions are still recorded, as Github retains both the discussion and the proposal, even if the branch is later deleted.
 * If a KEP discussion becomes long, and the KEP then goes through a major revision, the next version of the KEP can be posted as a new PR, which references the old PR. The old PR is then closed. This makes KEP review easier to follow and participate in.
 
