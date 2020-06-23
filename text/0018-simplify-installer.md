@@ -3,6 +3,7 @@
 * Keptn Installer does no longer automatically install istio nor nginx-ingress.
 * API and Bridge are no longer exposed using VirtualServices or Ingress objects - instead they are exposed using Kubernetes services (NodePort or LoadBalancer).
 * Helm-service (and services that use `KEPTN_DOMAIN`) will become independent from the Keptn API Domain.
+* More power to the admin! Exposing Bridge or API is an option for the admin, not for our CLI/API.
 
 ## Motivation
 
@@ -33,9 +34,9 @@ This should be motivation enough to
 
 ## Explanation
 
-When installing Keptn, you can choose to expose Keptn API And Keptn Bridge via Kubernetes Services.
+When installing Keptn, you can choose to expose Keptn API (and, optionally Keptn Bridge via Kubernetes Services.
 
-This can be done via the flags `--keptn-api-service-type=[ClusterIP | NodePort | LoadBalancer]` and `--keptn-bridge-service-type=[ClusterIP | NodePort | LoadBalancer]` (`ClusterIP` is the default if nothing is specified).
+This can be done via the flags `--keptn-api-service-type=[ClusterIP | NodePort | LoadBalancer]` (and `--keptn-bridge-service-type=[ClusterIP | NodePort | LoadBalancer]`), where `ClusterIP` is the default if nothing is specified.
 
 Depending on the service-type used, Keptn will configure the Kubernetes services of `api-gateway-nginx` and/or `bridge`, which can be verified by executing `kubectl -n keptn get service bridge api-gateway-nginx`.
 
@@ -47,7 +48,18 @@ NAME                TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)          AGE
 bridge              ClusterIP   10.0.83.209   <none>        8080:32122/TCP   85d
 api-gateway-nginx   ClusterIP   10.0.94.251   <none>        80/TCP           41d
 ```
-In this example neither bridge nor API are reachable from the outside. To reach it, one would have to 
+In this example neither bridge nor API are reachable from the outside. To reach it, one would have to use Kubernetes `port-forward` and re-authenticate as follows:
+
+```console
+kubectl -n keptn port-forward svc/api-gateway-nginx 8080:80
+```
+
+Now the API is reachable on `http://localhost:8080`, and keptn CLI can be authenticated as follows:
+
+```console
+keptn auth --endpoint=http://localhost:8080/ --api-token=$KEPTN_API_TOKEN --scheme=http
+```
+
 
 Here is another example if using `keptn install --keptn-api-service-type=LoadBalancer --keptn-bridge-service-type=ClusterIP`
 ```
@@ -56,14 +68,18 @@ NAME                TYPE           CLUSTER-IP    EXTERNAL-IP    PORT(S)         
 bridge              ClusterIP      10.0.83.209   <none>         8080:32122/TCP   85d
 api-gateway-nginx   LoadBalancer   10.0.94.251   11.22.33.44    80/TCP           41d
 ```
-In this example, the API is reachable via `http://11.22.33.44:80`.
+In this example, the API is reachable via `http://11.22.33.44:80`, and keptn CLI can be authenticated as follows:
+
+```console
+keptn auth --endpoint=http://11.22.33.44:80 --api-token=$KEPTN_API_TOKEN --scheme=http
+```
 
 
 Depending on the selected type, various restrictions might apply, e.g.:
 
 * `LoadBalancer` is not always available and the services external IP stays in status `<Pending>`.
 * `NodePort` might expose the service on a high port number (e.g., 31233) that might need to be configured using firewall rules
-* `ClusteriP` only exposes the service within the cluster, but not to the outside. This setting is desireable when applying an ingress-manifest manually afterwards.
+* `ClusterIP` only exposes the service within the cluster, but not to the outside. This setting is desireable when applying an ingress-manifest manually afterwards. Alternatively, a `port-forward` can be used to reach the service.
 
 
 ## Internal details
@@ -79,7 +95,8 @@ Depending on the selected type, various restrictions might apply, e.g.:
 * Installer: Do not set `KEPTN_DOMAIN`
 * Installer: Do not generate SSL certificates
 
-* CLI/API: Change `keptn configure bridge` no longer provide the flag `action=[expose | lockdown]`, but a flag to configure the service-type [user and password should stay as they are, they are still required]
+* CLI/API: Change `keptn configure bridge` no longer provide the flag `action=[expose | lockdown]`, only user and password.
+* Docs: Document how to expose Keptn Bridge as well as API using service-type `LoadBalancer` or `NodePort` afterwards (`kubectl patch ...`).
 
 * Upgrader: Research if any of the above changes need to be considered in the upgrader. Note: I think we don't need to change the upgrader for this. The current system should not break if the ugprade is applied, e.g., if bridge is already exposed using nginx-ingress it should stay exposed. If istio-system is already installed, it should stay as it is.
 
@@ -90,17 +107,6 @@ Depending on the selected type, various restrictions might apply, e.g.:
 * Docs: Remove the experimental tutorial about reusing an existing ingress-gateway (e.g., istio)
 * Docs/Tutorials: Update docs for installation with a troubleshooting guide if API can not be reached (e.g., refer to Kubernetes services and description of ClusterIP vs. NodePort vs. LoadBalancer) 
 * Docs/Tutorials: Provide solid Docs for Demo/POC (e.g., with GKE, K3s) and setting up a full installation of Keptn with onboarding services 
-
-
-From a technical perspective, how do you propose accomplishing the proposal? 
-
-In particular, please explain:
-
-* How would the change impact and interact with existing functionality?
-* Likely error modes and how to handle them
-* Corner cases and how to handle them
-
-While you do not need to prescribe a particular implementation - a KEP should be about **behavior**, not the implementation - it may be useful to provide at least one suggestion as to how the proposal *could* be implemented. This helps reassure reviewers that implementation is at least possible, and often helps them thinking more deeply about trade-offs, alternatives, etc.
 
 ## Trade-offs and mitigations
 
@@ -116,15 +122,29 @@ This is a problem that already occurs sometimes, but in this scenario it could o
 
 If the user wants to change this behaviour afterwards, it is as easy as calling `kubectl –n keptn edit service api` (`kubectl –n keptn patch service api …`) and change from ClusterIP to LoadBalancer. 
 
+* Change api service type to LoadBalancer
+    ```console
+    kubectl patch svc api-gateway-nginx -n keptn -p '{"spec": {"type": "LoadBalancer"}}'
+    ```
+* Change api service type to NodePort
+    ```console
+    kubectl patch svc api-gateway-nginx -n keptn -p '{"spec": {"type": "NodePort"}}'
+    ```
+* Change bridge service type to LoadBalancer
+    ```console
+    kubectl patch svc bridge -n keptn -p '{"spec": {"type": "LoadBalancer"}}'
+    ```
+* Change bridge service type to NodePort
+    ```console
+    kubectl patch svc bridge -n keptn -p '{"spec": {"type": "NodePort"}}'
+    ```
+
 If the user wants to use an ingress-controller (e.g., nginx-ingress, Linkerd, istio, traefic) for API/Bridge, the recommended way is to use ClusterIP and apply an ingress manifest manually. 
-
-
 
 
 ## Breaking changes
 
-
-* The CLI command `keptn configure bridge` will need to be re-thought.
+* The CLI command `keptn configure bridge` will need to be simplified to no longer change any service types or ingress manifests.
 * The configmap for `KEPTN_DOMAIN` will no longer be available, as we don't know the domain when installing Keptn.
 * Helm-Service will break without `KEPTN_DOMAIN` - instead we should ask the user to supply this configuration using a new environment variable called `INGRESS_HOSTNAME_SUFFIX` which we will default to `svc.cluster.local`
 * Helm-Service will need to check if istio is available before applying any virtualservices
