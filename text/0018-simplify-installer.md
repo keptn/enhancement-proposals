@@ -100,7 +100,7 @@ Depending on the selected type, various restrictions might apply, e.g.:
 
 * Upgrader: Research if any of the above changes need to be considered in the upgrader. Note: I think we don't need to change the upgrader for this. The current system should not break if the ugprade is applied, e.g., if bridge is already exposed using nginx-ingress it should stay exposed. If istio-system is already installed, it should stay as it is.
 
-* General: `KEPTN_DOMAIN` is no longer available (the installer can not determine this reliably). We need to research where this might be a problem. For `helm-service` and `openshift-route-service`, we could use a separate configmap with a variable called `INGRESS_HOSTNAME_SUFFIX` which is set to `cluster.svc.local` by default.
+* General: `KEPTN_DOMAIN` is no longer available (the installer can not determine this reliably). We need to research where this might be a problem. For `helm-service` (virtual-services for onboarded services) and `openshift-route-service` (oc create route for onboarded srvices), we could use a separate configmap with a variable called `INGRESS_HOSTNAME_SUFFIX` which is set to `cluster.svc.local` by default.
 * Dynatrace-Service: `KEPTN_DOMAIN` is required for configuring problem notifications that are sent back to the Keptn API. We need to come up with a solution for this...
 
 * Docs: Update docs for installation with the preferred service-type for each Cloud Provider 
@@ -146,12 +146,13 @@ If the user wants to use an ingress-controller (e.g., nginx-ingress, Linkerd, is
 
 * The CLI command `keptn configure bridge` will need to be simplified to no longer change any service types or ingress manifests.
 * The configmap for `KEPTN_DOMAIN` will no longer be available, as we don't know the domain when installing Keptn.
-* Helm-Service will break without `KEPTN_DOMAIN` - instead we should ask the user to supply this configuration using a new environment variable called `INGRESS_HOSTNAME_SUFFIX` which we will default to `svc.cluster.local`
-* Helm-Service will need to check if istio is available before applying any virtualservices
-* Not sure, but OpenShift support might break and we need to fix certain things
-* Dynatrace-service will break as it also relies on `KEPTN_DOMAIN` - especially for problem notifications
-* Keptn is no longer responsible for generating an SSL certificate
-* The user might have to configure the CLI manually
+* Helm-Service will break without `KEPTN_DOMAIN` - instead we should ask the user to supply this configuration using a new environment variable called `INGRESS_HOSTNAME_SUFFIX` which we will default to `svc.cluster.local`.
+* Helm-Service will need to check if istio is available before applying any virtualservices.
+* OpenShift-route-service will need similar changes like the `helm-service` and rely on `INGRESS_HOSTNAME_SUFFIX` when calling `oc create route`.
+* It will not be possible to auto-generate deep-links to Keptn Bridge, as we don't have a `KEPTN_DOMAIN` anymore, and Keptn is no longer responsible for exposing Keptn Bridge.
+* Dynatrace-service will break as it also relies on `KEPTN_DOMAIN` for problem notifications and hyperlinks to the onboarded services in the Dashboard as well as deep-links to Keptn Bridge.
+* Keptn is no longer responsible for generating an SSL certificate (it was self-signed anyway).
+* After installation, the user might have to configure the CLI manually in case of problems (e.g., when calling `keptn auth ...`).
 
 ## Prior art and alternatives
 
