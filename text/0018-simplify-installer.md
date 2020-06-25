@@ -21,10 +21,10 @@ In addition, Istio is quite a big software itself, and it's more than normal tha
 
 We also got some feedback from users regarding this:
 
-a) Many users already have istio installed by themselves and asked for an install option to re-use Istio. This was handled via [an experimental flag](https://keptn.sh/docs/0.6.0/reference/managed_istio/). 
-b) Some users were not allowed to use istio (nor nginx-ingress) and asked on whether we can support alternatives (the answere was unfortunately a no).
-c) Most Kubernetes users know how to expose a service using Kubernetes services of type LoadBalancer and NodePort - but using Istio was challenging for many. This made troubleshooting much more complicated.
-d) Many users asked for support of SSL certificates, which was really troublesome in many ways (it's not something Keptn should do, but at the same time we used our self-signed certificates for API and Bridge).
+* Many users already have istio installed by themselves and asked for an install option to re-use Istio. This was handled via [an experimental flag](https://keptn.sh/docs/0.6.0/reference/managed_istio/). 
+* Some users were not allowed to use istio (nor nginx-ingress) and asked on whether we can support alternatives (the answere was unfortunately a no).
+* Most Kubernetes users know how to expose a service using Kubernetes services of type LoadBalancer and NodePort - but using Istio was challenging for many. This made troubleshooting much more complicated.
+* Many users asked for support of SSL certificates, which was really troublesome in many ways (it's not something Keptn should do, but at the same time we used our self-signed certificates for API and Bridge).
 
 This should be motivation enough to
 
@@ -334,9 +334,9 @@ AFAIK the following controllers should work:
 ## Open questions
 
 * Do we want to automatically provide an option to expose Keptn Bridge using `--keptn-bridge-service-type` or should we refer to `keptn configure bridge` as before?
+* Or do we actually not want to care about Keptn Bridge at all right now, and not provide any specific service-type parameters?
 * Dynatrace-Service: `KEPTN_DOMAIN` is required for configuring problem notifications that are sent back to the Keptn API. We need to come up with a solution for this...
-* I am not sure if this approach will work on OpenShift
-* The installer could be able to determine the IP address that the user is going to be able to access the API, but it might not be reliable...
+* I am not sure if this approach will work on OpenShift (though it should)
 
 
 ## Future possibilities
