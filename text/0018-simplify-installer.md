@@ -158,6 +158,56 @@ If the user wants to use an ingress-controller (e.g., nginx-ingress, Linkerd, is
 
 None
 
+## This is what it looks like to the end-user
+
+Please note: This is not a tutorial, just a sketch of what it looks like to the end-user when installing Keptn after this KEP has been implemented.
+
+### Full Installation on GKE - Variant 1: Use Google LoadBalancer
+
+1. Ensure that you are connected to the correct Kubernetes cluster using `kubectl get nodes`.
+1. Install a recent version of Istio (if not already installed):
+   Go to https://istio.io/latest/docs/setup/getting-started/ and follow the guide there.
+   Example:
+   ```console
+   istioctl install --set profile=demo
+   ```
+1. Install Keptn and automatically expose the API using LoadBalancer (recommended for GKE)
+   ```console
+   keptn install --keptn-api-service-type=LoadBalancer
+   ```
+1. The installer should be able to automatically detect that the API is available, e.g., via http://1.2.3.4/, and configure the Keptn CLI.
+   In case this fails (for various reasons), the user would have to do the following:
+   ```console
+   kubectl -n keptn get svc api-gateway-nginx
+   ```
+   Note down IP and Port of the `api-gateway-nginx` service (e.g., 1.2.3.4, port 80), and manually authenticate the Keptn CLI, e.g.,
+   ```console
+   keptn auth --endpoint=http://1.2.3.4:80/ --api-token=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode) --scheme=http
+   ```
+1. If wanted, expose Keptn Bridge using a LoadBalancer
+   ```console
+   kubectl patch svc bridge -n keptn -p '{"spec": {"type": "LoadBalancer"}}'
+   ```
+1. Determine IP and Port of the istio ingressgateway using
+   ```console
+   kubectl -n istio-system get svc istio-ingressgateway
+   ```
+   Note down IP and Port (e.g., 5.6.7.8, port 443) and set a hostname for it in `INGRESS_HOSTNAME_SUFFIX` in the configmap
+   ```console
+   kubectl -n keptn create configmap --from-literal=INGRESS_HOSTNAME_SUFFIX=5-6-7-8.nip.io
+   ```
+1. Follow the tutorial for creating a project and onboarding a service
+
+
+### Full Installation on GKE - Variant 2: Use Ingress Gateways
+
+TBa
+
+### Control-Plane only Installation
+
+TBA
+
+
 ## Open questions
 
 * Do we want to automatically provide an option to expose Keptn Bridge using `--keptn-bridge-service-type` or should we refer to `keptn configure bridge` as before?
