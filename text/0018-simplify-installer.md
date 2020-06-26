@@ -139,7 +139,7 @@ If the user wants to change this behaviour afterwards, it is as easy as calling 
     kubectl patch svc bridge -n keptn -p '{"spec": {"type": "NodePort"}}'
     ```
 
-If the user wants to use an ingress-controller (e.g., nginx-ingress, Linkerd, istio, traefic) for API/Bridge, the recommended way is to use ClusterIP and apply an ingress manifest manually. 
+If the user wants to use an ingress-controller (e.g., nginx-ingress, istio, traefik) for API/Bridge, the recommended way is to use ClusterIP and apply an ingress manifest manually. 
 
 
 ## Breaking changes
@@ -164,6 +164,8 @@ Please note: This is not a tutorial, just a sketch of what it looks like to the 
 
 Keep in mind that installing a production setup for Istio is not trivial, and the instructions here are only meant for **demo purposes**.
 
+Also, SSL/TLS support is no longer part of a Keptn installation.
+
 ### Full Installation on GKE - Variant 1: Use Google LoadBalancer
 
 1. Ensure that you are connected to the correct Kubernetes cluster using `kubectl get nodes`.
@@ -173,6 +175,26 @@ Keep in mind that installing a production setup for Istio is not trivial, and th
    ```console
    istioctl install --set profile=demo
    ```
+1. [Not sure where to put this] Create a public-gateway for istio
+   ```yaml
+   ---
+   apiVersion: networking.istio.io/v1alpha3
+   kind: Gateway
+   metadata:
+   name: public-gateway
+   namespace: istio-system
+   spec:
+   selector:
+      istio: ingressgateway
+   servers:
+   - port:
+         name: http
+         number: 80
+         protocol: HTTP
+      hosts:
+      - '*'
+   ```
+   SSL/TLS is also possible, but not part of the demo.
 1. Install Keptn and automatically expose the API using LoadBalancer (recommended for GKE)
    ```console
    keptn install --keptn-api-service-type=LoadBalancer # --use-case=delivery will most likely be needed for 0.7.x
@@ -196,7 +218,7 @@ Keep in mind that installing a production setup for Istio is not trivial, and th
    ```
    Note down IP and Port (e.g., 5.6.7.8, port 80) and set a hostname for it in `INGRESS_HOSTNAME_SUFFIX` in the configmap
    ```console
-   kubectl -n keptn create configmap --from-literal=INGRESS_HOSTNAME_SUFFIX=5-6-7-8.nip.io
+   kubectl -n keptn create configmap ingress_hostname --from-literal=INGRESS_HOSTNAME_SUFFIX=5-6-7-8.nip.io
    ```
 1. Follow the tutorial for creating a project and onboarding a service
 
@@ -212,6 +234,26 @@ This kind-of rebuilds what keptn 0.6.x will do out of the box.
    ```console
    istioctl install --set profile=demo
    ```
+1. [Not sure where to put this] Create a public-gateway for istio
+   ```yaml
+   ---
+   apiVersion: networking.istio.io/v1alpha3
+   kind: Gateway
+   metadata:
+   name: public-gateway
+   namespace: istio-system
+   spec:
+   selector:
+      istio: ingressgateway
+   servers:
+   - port:
+         name: http
+         number: 80
+         protocol: HTTP
+      hosts:
+      - '*'
+   ```
+   SSL/TLS is also possible, but not part of the demo.
 1. Install Keptn, but do not expose the API:
    ```console
    keptn install --keptn-api-service-type=ClusterIP # --use-case=delivery will most likely be needed for 0.7.x
@@ -219,34 +261,34 @@ This kind-of rebuilds what keptn 0.6.x will do out of the box.
    The installer will complain that the API has not been exposed and therefore can not be reached. The user will be shown a link to our docs about how to resolve this matter (e.g., `kubectl port-forward`, changing the service-type afterwards, or using an ingress object).
 
 1. The user now can use [Istio Kubernetes ingress](https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/) to expose the API. First, they need to [determine IP and Port of the istio ingressgateway](https://istio.io/latest/docs/tasks/traffic-management/ingress/ingress-control/#determining-the-ingress-ip-and-ports) using
-   ```console
-   kubectl -n istio-system get svc istio-ingressgateway
-   ```
+    ```console
+    kubectl -n istio-system get svc istio-ingressgateway
+    ```
    Note down IP and Port (e.g., 5.6.7.8, port 80), and apply it to the following manifest:
-   ```yaml
-   apiVersion: networking.k8s.io/v1beta1
-   kind: Ingress
-   metadata:
-     annotations:
-       kubernetes.io/ingress.class: istio
-   name: your-api-keptn-ingress
-   namespace: keptn
-   spec:
-   rules:
-   - host: api-keptn.5-6-7-8.nip.io
-       http:
-       paths:
-       - backend:
-           serviceName: api-gateway-nginx
-           servicePort: 80
-   ```
+    ```yaml
+    apiVersion: networking.k8s.io/v1beta1
+    kind: Ingress
+    metadata:
+      annotations:
+        kubernetes.io/ingress.class: istio
+    name: your-api-keptn-ingress
+    namespace: keptn
+    spec:
+    rules:
+    - host: api-keptn.5-6-7-8.nip.io
+      http:
+        paths:
+        - backend:
+            serviceName: api-gateway-nginx
+            servicePort: 80
+    ```
    **Note**: If you want SSL Support, please look into the istio documentation 
 
 
 1. Manually authenticate the Keptn CLI using the hostname specified above, e.g.,
-   ```console
-   keptn auth --endpoint=http://api-keptn.5-6-7-8.nip.io/ --api-token=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode) --scheme=http
-   ```
+    ```console
+    keptn auth --endpoint=http://api-keptn.5-6-7-8.nip.io/ --api-token=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode) --scheme=http
+    ```
 1. If wanted, expose Keptn Bridge using the same approach.
    Don't forget to configure authentication for Bridge
    ```console
@@ -254,7 +296,7 @@ This kind-of rebuilds what keptn 0.6.x will do out of the box.
    ```
 1. Finally, re-use the IP and Port of the Istio ingressgateway to set `INGRESS_HOSTNAME_SUFFIX` in the configmap
    ```console
-   kubectl -n keptn create configmap --from-literal=INGRESS_HOSTNAME_SUFFIX=5-6-7-8.nip.io
+   kubectl -n keptn create configmap ingress_hostname --from-literal=INGRESS_HOSTNAME_SUFFIX=5-6-7-8.nip.io
    ```
 1. Follow the tutorial for creating a project and onboarding a service
 
@@ -302,23 +344,23 @@ AFAIK the following controllers should work:
    The installer will complain that the API has not been exposed and therefore can not be reached. The user will be shown a link to our docs about how to resolve this matter (e.g., `kubectl port-forward`, changing the service-type afterwards, or using an ingress object).
 1. Depending on your ingress controller, determine IP and Port (or hostname)
 1. Create an ingress object for API that looks somehow like this (minor changes might be needed depending on the ingress-controller):
-   ```yaml
-   apiVersion: networking.k8s.io/v1beta1
-   kind: Ingress
-   metadata:
-     annotations:
-       kubernetes.io/ingress.class: INSERT_INGRESS_CLASS_HERE
-   name: your-api-keptn-ingress
-   namespace: keptn
-   spec:
-   rules:
-   - host: api-keptn.5-6-7-8.nip.io
-       http:
-       paths:
-       - backend:
-           serviceName: api-gateway-nginx
-           servicePort: 80
-   ```
+    ```yaml
+    apiVersion: networking.k8s.io/v1beta1
+    kind: Ingress
+    metadata:
+      annotations:
+        kubernetes.io/ingress.class: INSERT_INGRESS_CLASS_HERE
+    name: your-api-keptn-ingress
+    namespace: keptn
+    spec:
+    rules:
+    - host: api-keptn.5-6-7-8.nip.io
+        http:
+          paths:
+          - backend:
+              serviceName: api-gateway-nginx
+              servicePort: 80
+    ```
 1. Manually authenticate the Keptn CLI using the hostname specified above, e.g.,
    ```console
    keptn auth --endpoint=http://api-keptn.5-6-7-8.nip.io/ --api-token=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode) --scheme=http
@@ -329,6 +371,43 @@ AFAIK the following controllers should work:
    keptn configure bridge --user=... --password=...
    ```
 1. Continue with any control-plane related tutorial (e.g., quality-gates, PerfaaS, self-healing, ...)
+
+### Control-plane installation on K3s
+
+Similar to "Control-Plane only Installation on GKE - Variant 2: Using ingress objects" it is possible to use the K3s built-in ingress traefik, by applying the following ingress object:
+
+```yaml
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: keptn-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: api-keptn.5-6-7-8.nip.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: api-gateway-nginx
+              servicePort: 80
+```
+
+### Control-plane installation on OpenShift 3.11
+
+Instead of using ingress-objects as detailed in "Control-Plane only Installation on GKE - Variant 2: Using ingress objects", OpenShift 3.11 ships a built-in routing and load-balancer. Therefore, the API can be exposed using
+
+```console
+oc create route edge api --service=api-gateway-nginx --port=http --insecure-policy='None' -n keptn
+```
+
+To inspect the route, use
+```console
+$ oc get route -n keptn api
+NAME        HOST/PORT                         PATH      SERVICES            PORT      TERMINATION   WILDCARD
+api         api-keptn.1.2.3.4.nip.io                    api-gateway-nginx   http      edge/None     None
+```
 
 
 ## Open questions
@@ -342,5 +421,5 @@ AFAIK the following controllers should work:
 ## Future possibilities
 
 * The split of `KEPTN_DOMAIN` and `INGRESS_HOSTNAME_SUFFIX` will allow a separation of control-plane and delivery-plane in the future.
-* The fact that api/bridge are no longer relying on a specific ingress gateway will allow easier switching of services meshes/ingress gateways in the future (e.g., linkerd, traefic, nginx-ingress)
+* The fact that api/bridge are no longer relying on a specific ingress gateway will allow easier switching of services meshes/ingress gateways in the future (e.g., linkerd, traefik, nginx-ingress)
 * api/bridge could be exposed via the same service endpoint (by re-configuring `api-gateway-nginx`), therefore only requiring a single LoadBalancer
