@@ -409,6 +409,16 @@ NAME        HOST/PORT                         PATH      SERVICES            PORT
 api         api-keptn.1.2.3.4.nip.io                    api-gateway-nginx   http      edge/None     None
 ```
 
+Also, exposing Keptn Bridge would work as follows:
+```console
+oc create route edge bridge --service=bridge --port=3000 --insecure-policy='None' -n keptn
+```
+
+Don't forget to configure authentication for Bridge
+```console
+keptn configure bridge --user=... --password=...
+```
+
 
 ## Open questions
 
