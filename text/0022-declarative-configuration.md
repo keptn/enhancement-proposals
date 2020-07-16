@@ -1,4 +1,4 @@
-# KEP0017 Declarative Configuration of Keptn
+# KEP0022 Declarative Configuration of Keptn
 
 To make configurations more reproducable and storable in Git Repositories (e.g. GitOps approaches), we should introduce a declarative way to configure keptn.
 
