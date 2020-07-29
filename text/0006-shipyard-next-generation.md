@@ -58,16 +58,19 @@ spec:
       listen:   
       - dev.artifact-delivery.finished
       tasks:
-      - deployment:
+      - name: deployment
+        properties:
           strategy: blue_green
           traffic: 100
-      - test:
+      - name: test
+        properties:
           kind: functional
-      - evaluation: 
-      - test:
+      - name: evaluation 
+      - name: test
+        properties:
           kind: performance
-      - evaluation:
-      - release: 
+      - name: evaluation
+      - name: release 
 ```
 
 *Meta-data:*
@@ -87,8 +90,11 @@ spec:
 * **tasks:** An array of tasks executed by the workflow in the declared order.
 
 *Definition of Task:*
-* Reserved key tasks are: **deployment**, **test**, **evaluate**, **release**, **remediation**
-* *labels* (`optional`): Task properties as individual `key:value` pairs. These labels precise the task and are consumed by the unit (Keptn-service) that executes the task. 
+
+* **name**: A unique name of the task
+* **properties** *(optional)*: Task properties as individual `key:value` pairs. These properties precise the task and are consumed by the unit that executes the task.
+
+**Note:** Reserved key tasks are: **deployment**, **test**, **evaluate**, **release**, **remediation**
  
 ### Functionality
 
@@ -126,7 +132,7 @@ rollback:
         matchExpressions:
           - {key: status, operator: In, values: [warning, failed]}
   tasks:
-  - rollback:
+  - name: rollback
 ```
 
 ### Shipyard controller
@@ -239,12 +245,14 @@ spec:
     workflows:
     - name: artifact-delivery
       tasks:
-      - deployment:
+      - name: deployment
+        properties:
           strategy: direct
-      - test:
+      - name: test
+        properties:
           kind: functional
-      - evaluation: 
-      - release: 
+      - name: evaluation 
+      - name: release
 
   - name: "hardening"
     workflows:
@@ -252,12 +260,14 @@ spec:
       listen:
       - dev.artifact-delivery.finished
       tasks:
-      - deployment:
+      - name: deployment
+        properties:
           strategy: blue_green
-      - test:
+      - name: test
+        properties:
           kind: performance
-      - evaluation:
-      - release:
+      - name: evaluation
+      - name: release
         
     - name: rollback
       listen:
@@ -266,7 +276,7 @@ spec:
             matchLabels:
               status: failed
       tasks:
-      - rollback:
+      - name: rollback
     
   - name: "production"
     workflows:
@@ -274,19 +284,21 @@ spec:
       listen:
       - hardening.artifact-delivery.finished
       tasks:
-      - deployment:
+      - name: deployment
+        properties:
           strategy: blue_green
-      - release:
+      - name: release
       
     - name: remediation
       listen: 
       - production.problem.open            #(smart default)
       - production.remediation.in-progress #(smart default)
       tasks:
-      - remediation:
-      - test:
+      - name: remediation
+      - name: test
+        properties:
           kind: real_user
-      - evaluation:
+      - name: evaluation
 ```
 
 ## Open questions
