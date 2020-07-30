@@ -55,7 +55,7 @@ spec:
   - name: "hardening"
     workflows:
     - name: artifact-delivery
-      listen:   
+      triggers:   
       - dev.artifact-delivery.finished
       tasks:
       - name: deployment
@@ -82,11 +82,11 @@ spec:
 *Definition of Stage:*
 * **stages:** An array of stages and each stage consists of the properties *name* and *workflows*.
   * **name:** A unique name of the stage.
-  * **workflows:** An array of workflows declared by name, listen, and tasks. 
+  * **workflows:** An array of workflows declared by name, triggers, and tasks. 
 
 *Definition of Workflow:*
 * **name:** A unique name of the workflow
-* **listen** (`optional`): An array of events that trigger the workflow.
+* **triggers** (`optional`): An array of events that trigger the workflow.
 * **tasks:** An array of tasks executed by the workflow in the declared order.
 
 *Definition of Task:*
@@ -102,7 +102,7 @@ spec:
     * `hardening.artifact-delivery.started` 
     * `hardening.artifact-delivery.finished` 
 
-1. Workflow triggers: The array *listen* contains all *domain events*(*) and workflow events with state finished to start this workflow, but this array is optional. If it is not set, a workflow can be started with an event of type: `[workflow.name].triggered`
+1. Workflow triggers: The array *triggers* contains all *domain events*(*) and workflow events with state finished to start this workflow, but this array is optional. If it is not set, a workflow can be started with an event of type: `[workflow.name].triggered`
     * (*) Domain event: *An event that occurred in the business process, written in past tense; [see](https://en.wikipedia.org/wiki/Event_storming)*. This is fired by a human or tool to inform about a certain situation. For example, a `problem.open` event is fired by a monitoring tool when a service runs in a problem mode.
 
 1. Task events: For each task, a `[task].triggered` event is sent by the control plane. Those Keptn-services that have a subscription on this event, will react with a `[task].started` event, perform their functions, and finally confirm their execution with a `[task].finished`. E.g., for the *test* task, the following events occurre:
@@ -122,7 +122,7 @@ While the `matchLabels` allows configuring a selector on a `key` with exactly on
 
 ```yaml
 rollback:
-  listen:
+  triggers:
   - hardening.deployment.finished:
       selector:
         matchLabels:
@@ -257,7 +257,7 @@ spec:
   - name: "hardening"
     workflows:
     - name: artifact-delivery
-      listen:
+      triggers:
       - dev.artifact-delivery.finished
       tasks:
       - name: deployment
@@ -270,7 +270,7 @@ spec:
       - name: release
         
     - name: rollback
-      listen:
+      triggers:
       - hardening.artifact-delivery.finished:
           selector:
             matchLabels:
@@ -281,7 +281,7 @@ spec:
   - name: "production"
     workflows:
     - name: artifact-delivery 
-      listen:
+      triggers:
       - hardening.artifact-delivery.finished
       tasks:
       - name: deployment
@@ -290,7 +290,7 @@ spec:
       - name: release
       
     - name: remediation
-      listen: 
+      triggers: 
       - production.problem.open            #(smart default)
       - production.remediation.in-progress #(smart default)
       tasks:
