@@ -301,6 +301,13 @@ spec:
       - name: evaluation
 ```
 
+## Ideas for enhancement
+
+- A task can have a property, which defines if the task should be executed depending on previous tasks: 
+  - `Only when all previous tasks have succeeded`
+  - `Even if a previous task has failed`
+  - `Only when a previous taks has failed`
+
 ## Open questions
 
 - Do we need a CloudEvent specification for workflow events? 
