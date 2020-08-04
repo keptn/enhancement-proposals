@@ -118,7 +118,7 @@ spec:
       - name: evaluation
       - name: approval
       - name: release
-  - name: "dev"
+  - name: "production"
     workflows:
     - name: artifact-delivery
       triggers:   
