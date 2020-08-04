@@ -34,12 +34,124 @@ The new responsibilities of the Helm-service would be:
 - Easy/out-of-the-box rollback
 - Configuration changes are done via Git edits
 - GitOps approach: Work with PRs to sync stages 
+- Allows to deploy a temporary branch (i.e. developer branch)
 
-## Explanation
+## Continuous Delivery Example
 
-<!-- keptn create project sockshop --shipyard=~/Desktop/examples/onboarding-carts/shipyard.yaml 
+Next, this KEP explains how the continuous-delivery use case would look for a user.
+Therefore, let's assume a user would like to deploy a service `carts` as direct deployment in 
+`dev` and as blue/green deployment in `staging` and `production`, i.e.
+
+|       | dev    | staging    | production |
+|-------|--------|------------|------------|
+| carts | direct | blue/green | blue/green |
+
+
+**Prerequisites:**
+- Install Argo rollouts:
+  ```console
+  kubectl create namespace argo-rollouts
+  kubectl apply -n argo-rollouts -f https://raw.githubusercontent.com/argoproj/argo-rollouts/stable/manifests/install.yaml
+  ```
+- Install Keptn Argo service (part of CD uniform):
+  ```console
+  kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/argo-service/0.1.1/deploy/service.yaml
+  ```
+- Install Keptn Helm-deploy-service (part of CD uniform):
+  ```console
+  kubectl apply -f https://raw.githubusercontent.com/keptn/helm-deploy-service/master/deploy/service.yaml
+  ```
+
+**Preparing the Helm chart:**
+- Prepare a Helm chart `carts-direct.tgz` which contains a Deployment manifest for `carts` 
+- Prepare a Helm chart `carts-bg.tgz` which contains a Rollout manifest for `carts`. The rollout is similar to a Deployment but allows to specify a `strategy`, i.e.:
+  ```console
+  apiVersion: argoproj.io/v1alpha1
+  kind: Rollout
+  metadata:
+    name: carts
+    labels:
+      app: carts
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: carts
+    strategy:
+      blueGreen:
+        autoPromotionEnabled: false
+        activeService: carts-primary
+        previewService: carts-canary
+  ```
+
+**Create a Project:**
+
+The shipyard defines three stages with deployment and release tasks:
+```console
+apiVersion: spec.keptn.sh/0.2.0
+kind: Shipyard
+metadata:
+  name: sockshop
+spec:
+  stages:
+  - name: "dev"
+    workflows:
+    - name: artifact-delivery
+      triggers:   
+      - dev.deployment.triggered
+      tasks:
+      - name: deployment
+      - name: test
+          kind: functional
+      - name: evaluation
+      - name: approval
+      - name: release
+  - name: "staging"
+    workflows:
+    - name: artifact-delivery
+      triggers:   
+      - staging.deployment.triggered
+      tasks:
+      - name: deployment
+      - name: test
+          kind: performance
+      - name: evaluation
+      - name: approval
+      - name: release
+  - name: "dev"
+    workflows:
+    - name: artifact-delivery
+      triggers:   
+      - production.deployment.triggered
+      tasks:
+      - name: deployment
+      - name: release
+```
+
+Create a Keptn project with
+```console
+keptn create project sockshop --shipyard=shipyard.yaml 
+```
+
+**Creating and onboarding the `carts` service:**
+
+First, create a service carts with
+```console
 keptn create service carts --project=sockshop
-keptn add-resource  --project=sockshop --stage=dev --service=carts --resource=carts-0.1.0.tgz --resourceUri=helm/carts.tgz
+```
+
+Afterwards, onboard the Helm charts with
+```console
+keptn add-resource  --project=sockshop --stage=dev --service=carts --resource=carts-direct.tgz --resourceUri=helm/carts.tgz
+keptn add-resource  --project=sockshop --stage=staging --service=carts --resource=carts-bg.tgz --resourceUri=helm/carts.tgz
+keptn add-resource  --project=sockshop --stage=production --service=carts --resource=carts-bg.tgz --resourceUri=helm/carts.tgz
+```
+Note, adding the Helm chart also for the production namespace can be skipped because we can also use a PR for this.
+
+**Deploy changes of Git repo:**
+
+To trigger a deployment for a certain stage, a CloudEvent of type `sh.keptn.event.deployment.triggered` has to be sent
+to the Keptn API.
 
 ```
 {
@@ -57,10 +169,11 @@ keptn add-resource  --project=sockshop --stage=dev --service=carts --resource=ca
 }
 ```
 
-keptn send event -f ~/Desktop/event.json  -->
+Therefore, the CLI provides the following command:
 
-
-## Internal details
+```console
+keptn send event -f event.json
+```
 
 
 
@@ -88,3 +201,4 @@ keptn send event -f ~/Desktop/event.json  -->
 - If the Helm chart contains multiple services that are deployed, which service should then get tested and evaluated? This destroys our mapping between a Keptn service and a K8s deployment.
 
 ## Future possibilities
+- Automatically inform Keptn that a branch in e.g. GitHub changed or a PR was merged. But this can also be implemented with Argo CD or Flux.
