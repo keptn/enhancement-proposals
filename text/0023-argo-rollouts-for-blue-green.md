@@ -22,19 +22,24 @@ Overall, these drawbacks limit the blue/green deployment/releasing capabilities 
 
 **Proposal:** This KEP proposes to completely remove the generation of the `generated-chart` in the helm-service and instead use [Argo Rollouts](https://argoproj.github.io/argo-rollouts/) for blue/green deployments as well as canary releases.
 
-The new responsibilities of the Helm-service would be:
-- *Deployment*: Execute a Helm upgrade with `helm upgrade KEPTN_SERVICE_NAME CHART -n KEPTN_PROJECT-KEPTN_STAGE --create-namespace --install`
+The responsibilities of the new `helm-deploy-service` would be reduced to a Helm upgrade (i.e. `helm upgrade KEPTN_SERVICE_NAME CHART -n KEPTN_PROJECT-KEPTN_STAGE --create-namespace --install`).
 
 **Benefits:** By implementing this KEP, the following advantages can be achieved:
 - Support of Keptn service, which consists of multiple deployments, services, etc. (i.e. release brackets)
 - User can decide if a service is exposed or not
 - Argo Rollouts provide out-of-the-box canary support
-- Direct and blue/green deployments can be mixed within a project
+- Direct and blue/green deployments can be mixed within a project, i.e. is defined on service level
 - Removes Istio dependency
 - Easy/out-of-the-box rollback
 - Configuration changes are done via Git edits
 - GitOps approach: Work with PRs to sync stages 
 - Allows to deploy a temporary branch (i.e. developer branch)
+
+
+Furthermore, the `helm-deploy-service` should be able to work with external Helm-charts, which are managed in Helm hub, Harbor, etc. 
+Therefore, the `helm-deploy-service` should not assume that the Helm-charts are managed within Keptn's Git-repo but should support to reference external Helm-charts.
+Then it is sufficient to only manage the values.yaml file within the Keptn's Git-repo.
+
 
 ## Continuous Delivery Example
 
@@ -140,7 +145,7 @@ First, create a service carts with
 keptn create service carts --project=sockshop
 ```
 
-Afterwards, onboard the Helm charts with
+Afterwards, onboard the Helm charts or a URI to the Helm chart, e.g. with
 ```console
 keptn add-resource  --project=sockshop --stage=dev --service=carts --resource=carts-direct.tgz --resourceUri=helm/carts.tgz
 keptn add-resource  --project=sockshop --stage=staging --service=carts --resource=carts-bg.tgz --resourceUri=helm/carts.tgz
