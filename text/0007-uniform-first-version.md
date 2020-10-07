@@ -31,6 +31,7 @@ However, the following situations occur:
 **Motivation:** The control plane should not be responsible for managing (e.g. starting, stopping, registering) the execution plane services because it most likely does not have the rights to start a service in, e.g., a production environment. Furthermore, it should be transparent for the control plane which execution plane services are used. The control plane only needs to know how many execution plane services are listening for a task in order to do the synchronization.
 
 **Technical approach:**
+
 - A Keptn-service has to register at the control plane. This is required to inform the control plane about its existence and the topic and project the service is interested in. This can be done using a POST request to the shipyard controller (POST KEPTN_ENDPOINT/v1/events/register)
 
 - Each execution plane service must periodically (e.g. 30 sec interval) confirm its interest in the registered topic. 
@@ -40,20 +41,25 @@ However, the following situations occur:
 ## Possible approaches
 
 To implement the concept of a Uniform, two approaches fit into the principles of Keptn: 
-Uniform as Custom Resource Definition (CRD)
-Uniform based on GitOps approach
+
+- Uniform as Custom Resource Definition (CRD)
+- Uniform based on GitOps approach
+
 ### Uniform as Custom Resource Definition (CRD)
 
 This approach has actually two expansion stages: 
-Install a Uniform by the plain deployment manifests of the Keptn-services - configured for topic, Keptn endpoint, and project
-Define a CRD that adds “syntactic sugar” to make the handling of the deployment manifest of a Keptn-service easier - focus on the declaration of: image, topic, Keptn endpoint, and project 
-A CRD concludes to have an Operator that requires RBAC rules to create/delete deployment and service
+
+- Install a Uniform by the plain deployment manifests of the Keptn-services - configured for topic, Keptn endpoint, and project
+- Define a CRD that adds “syntactic sugar” to make the handling of the deployment manifest of a Keptn-service easier - focus on the declaration of: image, topic, Keptn endpoint, and project 
+  - A CRD concludes to have an Operator that requires RBAC rules to create/delete deployment and service
  
-Known Impacts
-The uniform operator can only run on K8s. How do we handle execution plane services not running on K8s?
-The uniform is not Git-managed
+Known Impacts:
+
+- The uniform operator can only run on K8s. How do we handle execution plane services not running on K8s?
+- The uniform is not Git-managed
  
 #### Keptn-service Deployment manifest
+
 As a user, I apply a deployment manifest using: kubectl apply -f xyz.yaml for each Keptn-service.
  
 A deployment manifest for a Keptn-service looks as follows:
@@ -128,6 +134,7 @@ spec:
  
 A (simple) user experience improvement would be to provide an Umbrella Helm Chart for frequently used services in the execution plane, e.g. a simple version of a market place. This would allow the Keptn users to install/deinstall Keptn services by setting SERVICE-NAME.enabled=true/false in the values file of the Umbrella chart.
 This requires to provide a Hem chart for each Keptn service.
+
 #### Custom Resource Definition
  
 As a user, I apply the CRD using: kubectl apply -f uniform.yaml to deploy the entire execution plane.
@@ -168,21 +175,26 @@ spec:
   * **events:** An array of events the *Keptn-service* can process.
   * **env:** An array of environment variables used to configure the *Keptn-service*.
  
-### “Uniform” based on GitOps-approach
+### Uniform based on GitOps-approach
+
 As a user, I add a `uniform.yaml` (as shown by CRD) to the Git repository of the project.
 On the execution plane, an “operator” detects this change and automatically applies it to the target platform. 
 
 Known Impacts:
-Either the uniform “operator” needs access to the Git repository or we will provide an endpoint at the control plan, which allows the uniform operator to query the uniforms.
-The uniform operator needs to know for which project it is responsible for.
 
-Format
-We can reuse the same format as we do for the CRD-approach. 
+- Either the uniform “operator” needs access to the Git repository or we will provide an endpoint at the control plan, which allows the uniform operator to query the uniforms.
+- The uniform operator needs to know for which project it is responsible for.
 
-Unsorted thoughts
-When we pick this approach, the Git repository should be the single place where to change the tooling, e.g. no changes directly in the uniform “operator”
+Format:
+
+- We can reuse the same format as we do for the CRD-approach. 
+
+Unsorted thoughts:
+
+- When we pick this approach, the Git repository should be the single place where to change the tooling, e.g. no changes directly in the uniform “operator”
 
 ## Details
+
 ### Scope
 
 A Uniform is defined on the level of a project meaning that each project has its Uniform.
