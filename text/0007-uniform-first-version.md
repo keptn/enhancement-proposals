@@ -53,7 +53,7 @@ This approach has actually two expansion stages:
 - Define a CRD that adds “syntactic sugar” to make the handling of the deployment manifest of a Keptn-service easier - focus on the declaration of: image, topic, Keptn endpoint, and project 
   - A CRD concludes to have an Operator that requires RBAC rules to create/delete deployment and service
  
-Known Impacts:
+*Known Impacts:*
 
 - The uniform operator can only run on K8s. How do we handle execution plane services not running on K8s?
 - The uniform is not Git-managed
@@ -180,26 +180,20 @@ spec:
 As a user, I add a `uniform.yaml` (as shown by CRD) to the Git repository of the project.
 On the execution plane, an “operator” detects this change and automatically applies it to the target platform. 
 
-Known Impacts:
+*Known Impacts:*
 
 - Either the uniform “operator” needs access to the Git repository or we will provide an endpoint at the control plan, which allows the uniform operator to query the uniforms.
 - The uniform operator needs to know for which project it is responsible for.
 
-Format:
+*Format:*
 
 - We can reuse the same format as we do for the CRD-approach. 
 
-Unsorted thoughts:
+*Unsorted thoughts:*
 
 - When we pick this approach, the Git repository should be the single place where to change the tooling, e.g. no changes directly in the uniform “operator”
 
-## Details
-
-### Scope
-
-A Uniform is defined on the level of a project meaning that each project has its Uniform.
-
-### Impact on existing functionality
+## Impact on existing functionality
 
 - Keptn 0.7.0 installation process: The *Keptn-services* that are responsible for a delivery or remediation workflow (aka, batteries such as: jmeter-service, lighthouse-service, remediation-service, etc.), need to be removed from the installation process of Keptn. Instead, these services must move to a default uniform the user can adapt and apply.
 
