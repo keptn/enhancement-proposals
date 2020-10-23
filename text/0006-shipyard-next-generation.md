@@ -102,7 +102,7 @@ spec:
     * `hardening.artifact-delivery.started` 
     * `hardening.artifact-delivery.finished` 
 
-1. Triggers: The array *triggers* contains all *domain events*(*) and sequence events with state finished to start this task sequence, but this array is optional. If it is not set, a sequence can be started with an event of type: `[sequence.name].triggered`
+1. Triggers: The array *triggers* contains all *domain events*(*) and sequence events with state finished to start this task sequence, but this array is optional. If it is not set, a sequence can be started with an event of type: `[stage.name].[sequence.name].triggered`
     * (*) Domain event: *An event that occurred in the business process, written in past tense; [see](https://en.wikipedia.org/wiki/Event_storming)*. This is fired by a human or tool to inform about a certain situation. For example, a `problem.open` event is fired by a monitoring tool when a service runs in a problem mode.
 
 1. Task events: For each task, a `[task].triggered` event is sent by the control plane. Those Keptn-services that have a subscription on this event, will react with a `[task].started` event, perform their functions, and finally confirm their execution with a `[task].finished`. E.g., for the *test* task, the following events occurre:
