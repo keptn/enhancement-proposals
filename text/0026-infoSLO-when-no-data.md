@@ -4,7 +4,7 @@ Turn an SLO into an info SLO - i.e., an SLO without criteria - when the SLI does
 
 ## Motivation
 
-* An SLI does not always provide metric values resutling in a faling SLO since data is expected. If an SRE knows the reason why the SLI is not providing data and this situation can be accpeted, he/she wants to ignore the SLO if no data is available. In other words, an SLO should be configurable to not check the criteria if no data is available.  
+* An SLI does not always provide metric values resulting in a failing SLO since data is expected. If an SRE knows the reason why the SLI is not providing data and this situation can be accepted, he/she wants to ignore the SLO if no data is available. In other words, an SLO should be configurable to not check the criteria if no data is available.  
 
 ## Explanation
 
@@ -36,3 +36,7 @@ objectives:
 ## Breaking changes
 
 - *no breaking change*: This introduces a spec change of the SLO which adds an additional property without breaking existing SLO configurations. 
+
+## Open questions
+
+- **Weakness of comparison strategy**: This new spec change could introduce a weakness of the quality gate because an outage of an SLI-provider could result in an evaluation with many *info SLOs* which are not considered for the next comparisons. When comparing the current quality gate evaluation with the previous evaluation(s), are *info SLOs* taken into consideration?
