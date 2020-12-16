@@ -254,7 +254,7 @@ spec:
       - name: evaluation 
       - name: release
 
-  - name: "hardening"
+  - name: "staging"
     sequences:
     - name: artifact-delivery
       triggers:
