@@ -6,23 +6,23 @@ The next generation of Shipyard to allow custom delivery/remediation processes.
 
 *There's always room for smart enhancements* - the Shipyard specification is no exception.
 
-A shipyard allows a **Site Reliability Engineer (SRE)** to specify WHAT should happen in the course of an artifact delivery or remediation process. Due to certain use cases, it has been identified that the current specification of the shipyard has limitations and hides details from the SRE. This KEP proposes an enhancement of the *Shipyard* specification to bring flexibility into the definition of the *WHAT*, but still provides an opinionated approach and smart defaults.
+The current specification of Keptn's [Shipyard](https://github.com/keptn/spec/blob/0.1.7/shipyard.md) has several limitations and hides details from end-users. This KEP provides an enhancement of the *Shipyard* format such that it allows end-users to specify *WHAT* should happen in the course of an artifact delivery or remediation process. While it brings flexibility into the definition of the *WHAT*, it is still an opinionated approach with smart defaults.
 
-Please read this KEP in combination with the KEP: [First version of a Keptn uniform](https://github.com/keptn/enhancement-proposals/pull/7); especially regarding the eventing part.
+In addition, please consider [KEP 07: Propose the concept of a Uniform](https://github.com/keptn/enhancement-proposals/pull/7) as it specifies which components responds to certain events/tasks defined within the Shipyard.
 
 ## Explanation
 
-:man:/:blonde_woman: The target persona of this KEP is an *SRE*, who is responsible for processes and workflows to automate application delivery or remediation operations. 
+:man:/:blonde_woman: For instance, one target persona of this KEP could be an SRE (Site Reliability Engineer), who is responsible for processes and workflows to automate application delivery or remediation operations. 
 
 Before getting started, a brief recap of the important terms and definitions used in this KEP:
 
-- **Project stage:** A project stage (or just stage) defines a logical space in an environment, which has a dedicated purpose for an application in a continuous delivery process. The project stages are ordered, meaning that a stage has at least a previous and/or next stage. 
+- **Project stage:** A project stage (or just stage) defines a logical space in an environment, which has a dedicated purpose for an application in a continuous delivery process. At least one stage must be defined (e.g., for a single stage project), but multiple stages are allowed (e.g., for implementing a staging process using a development, hardening, and production stage). If multiple stages are defined, by default they are ordered according to the shipyard file. However, it is possible to change the default order by defining triggers as mentioned below.
 
 - **Shipyard:** A shipyard is the declarative means to divide an environment into project stages and to specify task sequences for each stage.
 
-- **Sequence:** A sequence declares a set of tasks, which are triggered by an external event (aka. domain event, e.g.: artifact built → deploy artifact, a problem occurred → execute remediation, etc.). A sequence executes the tasks in the given order. 
+- **Sequence:** A sequence declares a set of tasks, which are triggered by an external event (aka. domain event, e.g.: artifact built → deploy artifact, a problem occurred → execute remediation, etc.). Within a sequence, tasks are executed in the given order.
 
-- **Task:** A task is the smallest executable unit of a sequence. A task is kicked-off by a *triggered* event and has a life cycle of a *start* and *finished* event. 
+- **Task:** A task is the smallest executable unit of a sequence. A task is kicked-off by a *triggered* event and has a life cycle of a *started*, *status.changed* (optional), and *finished* event. 
 
 *Current situation and Problem(s):* The current shipyard specification allows dividing an environment into project stages. In each stage, two ways for deploying (direct, blue/green) and testing (functional/performance) an artifact are provided. Besides, an SRE can specify whether a project stage is capable of handling problems by remediation actions. This specification has some limitations: 
 
@@ -36,7 +36,7 @@ Before getting started, a brief recap of the important terms and definitions use
 
 - The trigger (domain event) of a task sequence can not be set. 
 
-*Solution:* A revision of the shipyard specification v0.1.2 addresses the above-mentioned problems and gives SREs more flexibility in declaring processes. 
+*Solution:* By enhancing the Shipyard specificiation as detailed below (*target version is: v0.2.0*), the above-mentioned problems are addressed and more flexibility for declaring processes is provided.
 
 ## Internal details
 
@@ -74,9 +74,9 @@ spec:
 ```
 
 *Meta-data:*
-* **version**: The version of the shipyard specification. 
+* **version**: The version of the Shipyard specification, e.g., `spec.keptn.sh/0.2.0`
 * **kind**: Is set to `Shipyard`.
-* **metadata:** Contains at least the property *name*, which declares a unique name for the shipyard.
+* **metadata:** Contains at least the property *name*, which declares a name for the shipyard.
 * **spec:** Consists of the property *stages*.
 
 *Definition of Stage:*
@@ -94,7 +94,7 @@ spec:
 * **name**: A unique name of the task
 * **properties** *(optional)*: Task properties as individual `key:value` pairs. These properties precise the task and are consumed by the unit that executes the task.
 
-**Note:** Reserved key tasks are: **deployment**, **test**, **evaluate**, **release**, **remediation**
+**Note:** Reserved key tasks are: **approval**, **deployment**, **evaluate**, **release**, **remediation**, and **test**,.
  
 ### Functionality
 
@@ -102,10 +102,10 @@ spec:
     * `hardening.artifact-delivery.started` 
     * `hardening.artifact-delivery.finished` 
 
-1. Triggers: The array *triggers* contains all *domain events*(*) and sequence events with state finished to start this task sequence, but this array is optional. If it is not set, a sequence can be started with an event of type: `[stage.name].[sequence.name].triggered`
+1. Triggers: The array *triggers* contains all *domain events*(*) and sequence events with state finished to start this task sequence, but this array is optional. If it is not set, a sequence can be started with an event of type: `[stage.name].[sequence.name].triggered`. Note that only `<stage>.<task-sequence>.finished` events with `data.result` set to `pass` are able to trigger another task sequence.
     * (*) Domain event: *An event that occurred in the business process, written in past tense; [see](https://en.wikipedia.org/wiki/Event_storming)*. This is fired by a human or tool to inform about a certain situation. For example, a `problem.open` event is fired by a monitoring tool when a service runs in a problem mode.
 
-1. Task events: For each task, a `[task].triggered` event is sent by the control plane. Those Keptn-services that have a subscription on this event, will react with a `[task].started` event, perform their functions, and finally confirm their execution with a `[task].finished`. E.g., for the *test* task, the following events occurre:
+1. Task events: For each task, a `[task].triggered` event is sent by the control plane. Those Keptn-services that have a subscription on this event, will react with a `[task].started` event, perform their functions, and finally confirm their execution with a `[task].finished`. E.g., for the *test* task, the following events occur:
     * `test.triggered`
       * `test.started`
       * `test.finished`
@@ -141,11 +141,11 @@ This KEP also proposes the implementation of a Keptn core component - the so-cal
 
 ### Keptn CloudEvents
 
-Based on the propsed concepts, changes on the Keptn CloudEvents are necessary.
+Based on the proposed concepts, changes on the Keptn CloudEvents are necessary.
 
 **(1) Reserved space in CloudEvent payload:**
 
-Before the shipyard controller sends out a `[task].triggered` event for a specific task, the controller adds a reserved space to the event payload. This reserved space is named after the task and can be consumed by the unit (Keptn-service) that executes the task. For example, a *deployment* task gets the reserved space of *deployment* in the payload (i.e., data field) of the CloudEvent. Per default, this reserved space is empty. Expect for tasks that have properties defined in the shipyard (e.g., `strategy: blue_green`) - for those tasks the properties are added to the reserved space:
+Before the shipyard controller sends out a `[task].triggered` event for a specific task, the controller adds a reserved space to the event payload. This reserved space is named after the task and can be consumed by the unit (Keptn-service) that executes the task. For example, a *deployment* task gets the reserved space of *deployment* in the payload (i.e., data field) of the CloudEvent. Per default, this reserved space is empty. Except for tasks that have properties defined in the shipyard (e.g., `strategy: blue_green`) - for those tasks the properties are added to the reserved space:
   
 ```
 {
@@ -176,7 +176,7 @@ Before the shipyard controller sends out a `[task].triggered` event for a specif
   }
   ```
 
-* The event selectors for Keptn-services, as proposed in [First version of a Keptn uniform](https://github.com/keptn/enhancement-proposals/pull/7), work based on the information provided in this reserved space. For example:
+* The event selectors for Keptn-services, as proposed in [KEP 07: Propose the concept of a Uniform](https://github.com/keptn/enhancement-proposals/pull/7), work based on the information provided in this reserved space. For example:
   ```yaml
     - name: deployment-service
       image: keptn/helm-service:0.6.0
@@ -205,18 +205,16 @@ Before the shipyard controller sends out a `[task].triggered` event for a specif
   }
   ```
 
-
-
 ## Breaking changes
 
-This KEP breaks the implementation of Keptn 0.6.0: 
-* Keptn-services (aka. batteries) including contributed services need to be changed to react on a `[task].triggered`, and send a `[task].started` → `[task].finished`.
+This KEP breaks the implementation of Keptn 0.7.0: 
+* All Keptn-services including contributed services (in GitHub organizations: [keptn-contrib](https://github.com/keptn-contrib), [keptn-sandbox](https://github.com/keptn-sandbox)) need to be changed to react on a `[task].triggered` event, and send a `[task].started` → `[task].finished`.
 * Keptn CloudEvents must be changed.
 * A shipyard migration must take place as outlined below.
 
-### Upgrade path from Shipyard 0.1.2  to 0.2.0
+### Upgrade path from Shipyard 0.1.x to 0.2.0
 
-The shipyard specification version 0.1.2 as used by Keptn 0.5.0 and 0.6.0 (last supported Keptn versions) has to be migrated to the new specification. Thus, the following spec: 
+The shipyard specification version 0.1.x as used by Keptn versions 0.7.x and older has to be migrated to the new specification. Thus, the following spec: 
 
 ```yaml
 stages:
