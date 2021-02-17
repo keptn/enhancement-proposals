@@ -55,8 +55,8 @@ spec:
   - name: hardening
     sequences:
     - name: artifact-delivery
-      triggers:   
-      - dev.artifact-delivery.finished
+      triggeredOn:   
+      - event: dev.artifact-delivery.finished
       tasks:
       - name: deployment
         properties:
@@ -86,7 +86,7 @@ spec:
 
 *Definition of Sequence:*
 * **name:** A unique name of the sequence
-* **triggers** (`optional`): An array of events that trigger the task sequence.
+* **triggeredOn** (`optional`): An array of events that trigger the task sequence.
 * **tasks:** An array of tasks executed by the sequence in the declared order.
 
 *Definition of Task:*
@@ -102,7 +102,7 @@ spec:
     * `hardening.artifact-delivery.started` 
     * `hardening.artifact-delivery.finished` 
 
-1. Triggers: The array *triggers* contains all *domain events*(*) and sequence events with state finished to start this task sequence, but this array is optional. If it is not set, a sequence can be started with an event of type: `[stage.name].[sequence.name].triggered`. Note that only `<stage>.<task-sequence>.finished` events with `data.result` set to `pass` are able to trigger another task sequence.
+1. TriggeredOn: The array *triggeredOn* contains all *domain events*(*) and sequence events with state finished to start this task sequence, but this array is optional. If it is not set, a sequence can be started with an event of type: `[stage.name].[sequence.name].triggered`. Note that only `<stage>.<task-sequence>.finished` events with `data.result` set to `pass` are able to trigger another task sequence.
     * (*) Domain event: *An event that occurred in the business process, written in past tense; [see](https://en.wikipedia.org/wiki/Event_storming)*. This is fired by a human or tool to inform about a certain situation. For example, a `problem.open` event is fired by a monitoring tool when a service runs in a problem mode.
 
 1. Task events: For each task, a `[task].triggered` event is sent by the control plane. Those Keptn-services that have a subscription on this event, will react with a `[task].started` event, perform their functions, and finally confirm their execution with a `[task].finished`. E.g., for the *test* task, the following events occur:
@@ -116,21 +116,18 @@ spec:
 
 ### Event selector
 
-A sequence has a subscription to certain events that trigger the sequence. However, an SRE not only wants to configure the event type, but also a selector on this event. This selector configures more precisely when the sequence should be triggered. For example, an SRE wants to configure that a rollback sequence should be triggered just when deployment or release failed. Therefore, this KEP proposes the approach of an event selector using  `matchLabels` and `matchExpressions`. 
-
-While the `matchLabels` allows configuring a selector on a `key` with exactly one expected `value`, the `matchExpressions` allows configuring a selector on a `key` with multiple value options. For example, the below rollback sequence has a subscription to two events. (1) For the first `hardening.deployment.finished` event a selector is configured based on the label `status:failed`. This means that the rollback sequence gets triggered when the event has the label `status:failed` attached. (2) For the second `hardening.release.finished` event a selector is configured for the key `status`, which can have either the value `warning` or `failed`.
+A sequence has a subscription to certain events that trigger the sequence. However, an SRE not only wants to configure the event type, but also a selector on this event. This selector configures more precisely when the sequence should be triggered. For example, an SRE wants to configure that a rollback sequence should be triggered just when deployment or release failed. Therefore, this KEP proposes the approach of an event selector using the `match` property
+For example, the below rollback sequence has a subscription to the event `hardening.deployment.finished`. Further, it specifies a selector that matches the value of the `result` field against the value `fail`.
+Thus, the rollback sequence is only triggered iff the selector evaluates to true. Note that in a first step, only selectors which matches a value against the `result` property will be supported.
+In a future enhancement additional selectors with more powerful match expressions shall be supported.
 
 ```yaml
 rollback:
   triggers:
-  - hardening.deployment.finished:
-      selector:
-        matchLabels:
-          status: failed
-  - hardening.release.finished:
-      selector:
-        matchExpressions:
-          - {key: status, operator: In, values: [warning, failed]}
+  - event: hardening.deployment.finished
+    selector:
+      match:
+        result: fail
   tasks:
   - name: rollback
 ```
@@ -255,8 +252,8 @@ spec:
   - name: "staging"
     sequences:
     - name: artifact-delivery
-      triggers:
-      - dev.artifact-delivery.finished
+      triggeredOn:
+      - event: dev.artifact-delivery.finished
       tasks:
       - name: deployment
         properties:
@@ -268,11 +265,11 @@ spec:
       - name: release
         
     - name: rollback
-      triggers:
-      - hardening.artifact-delivery.finished:
-          selector:
-            matchLabels:
-              status: failed
+      triggeredOn:
+      - event: hardening.artifact-delivery.finished
+        selector:
+          match:
+            result: fail
       tasks:
       - name: rollback
     
@@ -288,9 +285,9 @@ spec:
       - name: release
       
     - name: remediation
-      triggers: 
-      - production.problem.open            #(smart default)
-      - production.remediation.in-progress #(smart default)
+      triggeredOn: 
+      - event: production.problem.open            #(smart default)
+      - event:  production.remediation.in-progress #(smart default)
       tasks:
       - name: remediation
       - name: test
