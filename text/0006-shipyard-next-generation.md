@@ -60,15 +60,14 @@ spec:
       tasks:
       - name: deployment
         properties:
-          strategy: blue_green
-          traffic: 100
+          deploymentstrategy: blue_green
       - name: test
         properties:
-          kind: functional
+          teststrategy: functional
       - name: evaluation 
       - name: test
         properties:
-          kind: performance
+          teststrategy: performance
       - name: evaluation
       - name: release 
 ```
@@ -142,7 +141,7 @@ Based on the proposed concepts, changes on the Keptn CloudEvents are necessary.
 
 **(1) Reserved space in CloudEvent payload:**
 
-Before the shipyard controller sends out a `[task].triggered` event for a specific task, the controller adds a reserved space to the event payload. This reserved space is named after the task and can be consumed by the unit (Keptn-service) that executes the task. For example, a *deployment* task gets the reserved space of *deployment* in the payload (i.e., data field) of the CloudEvent. Per default, this reserved space is empty. Except for tasks that have properties defined in the shipyard (e.g., `strategy: blue_green`) - for those tasks the properties are added to the reserved space:
+Before the shipyard controller sends out a `[task].triggered` event for a specific task, the controller adds a reserved space to the event payload. This reserved space is named after the task and can be consumed by the unit (Keptn-service) that executes the task. For example, a *deployment* task gets the reserved space of *deployment* in the payload (i.e., data field) of the CloudEvent. Per default, this reserved space is empty. Except for tasks that have properties defined in the shipyard (e.g., `deploymentstrategy: blue_green`) - for those tasks the properties are added to the reserved space:
   
 ```
 {
@@ -150,8 +149,7 @@ Before the shipyard controller sends out a `[task].triggered` event for a specif
   ...
   "data": {
     "deployment": {
-      "strategy": "blue_green",
-      "traffic": "100",
+      "deploymentstrategy": "blue_green"
     }
   }
 }
@@ -165,8 +163,7 @@ Before the shipyard controller sends out a `[task].triggered` event for a specif
     ...
     "data": {
       "deployment": {
-        "strategy": "blue_green",
-        "traffic": "100",
+        "deploymentstrategy": "blue_green",
         "deploymentURI":"https://my-service.domain.com/" // Property added by Keptn-service
       }
     }
@@ -181,18 +178,17 @@ Before the shipyard controller sends out a `[task].triggered` event for a specif
       - deployment.triggered:
         selector:
           matchExpressions:
-          - {key: strategy, operator: In, values: [direct, blue_green]}
+          - {key: deploymentstrategy, operator: In, values: [direct, blue_green]}
   ```
 
-* The shipyard controller merges the reserved spaces of a `[task-xyz].triggered`, `[task-xyz].started` and `[task-xyz].finished` event. If, for example, the `deployment.triggered` event contains `strategy:blue_green` and the `deployment.finished` event contains `deploymentURI:xyz` in the reserved space, the shipyard controller merges the the reserved space, before sending the next `[test].triggered`: 
+* The shipyard controller merges the reserved spaces of a `[task-xyz].triggered`, `[task-xyz].started` and `[task-xyz].finished` event. If, for example, the `deployment.triggered` event contains `deploymentstrategy:blue_green` and the `deployment.finished` event contains `deploymentURI:xyz` in the reserved space, the shipyard controller merges the the reserved space, before sending the next `[test].triggered`: 
   ```
   {
     "type": "sh.keptn.event.task-abc.triggered",
     ...
     "data": {
       "deployment": {
-        "strategy": "blue_green",
-        "traffic": "100",
+        "deploymentstrategy": "blue_green",
         "deploymentURI":"https://my-service.domain.com/" // Property added by Keptn-service
       }
       "test": {
@@ -242,10 +238,10 @@ spec:
       tasks:
       - name: deployment
         properties:
-          strategy: direct
+          deploymentstrategy: direct
       - name: test
         properties:
-          kind: functional
+          teststrategy: functional
       - name: evaluation 
       - name: release
 
@@ -257,10 +253,10 @@ spec:
       tasks:
       - name: deployment
         properties:
-          strategy: blue_green
+          deploymentstrategy: blue_green
       - name: test
         properties:
-          kind: performance
+          teststrategy: performance
       - name: evaluation
       - name: release
         
@@ -281,18 +277,18 @@ spec:
       tasks:
       - name: deployment
         properties:
-          strategy: blue_green
+          deploymentstrategy: blue_green
       - name: release
       
     - name: remediation
       triggeredOn: 
-      - event: production.problem.open            #(smart default)
-      - event:  production.remediation.in-progress #(smart default)
+      - event: production.problem.open             #(smart default)
+      - event: production.remediation.in-progress  #(smart default)
       tasks:
       - name: remediation
       - name: test
         properties:
-          kind: real_user
+          teststrategy: real_user
       - name: evaluation
 ```
 
