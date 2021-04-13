@@ -122,7 +122,7 @@ In a future enhancement additional selectors with more powerful match expression
 
 ```yaml
 rollback:
-  triggers:
+  triggeredOn:
   - event: hardening.deployment.finished
     selector:
       match:
@@ -272,7 +272,7 @@ spec:
   - name: "production"
     sequences:
     - name: artifact-delivery 
-      triggers:
+      triggeredOn:
       - hardening.artifact-delivery.finished
       tasks:
       - name: deployment
