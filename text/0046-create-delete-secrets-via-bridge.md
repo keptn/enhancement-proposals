@@ -1,51 +1,43 @@
-# REPLACE this with your KEP title
-
-Short one-sentence summary, i.e., a sentence that would be appropriate for a [CHANGELOG](https://keepachangelog.com/) or release note.
+# Creating/Deleting Secrets for Integrations using Bridge
 
 ## Motivation
 
-* Which use-cases does this KEP enable?
-* Which value would this KEP create?
+* *Pain*: Creating a secret for a Keptn-service requires the Keptn CLI or API. This can be a problem; especially in restricted environments where the download of the CLI from GitHub is restricted.
+* *Target*: UI-based approach to create/delete a secret for a Keptn-service. 
+* *Driver*: Improve the experience in working with Keptn-services; reduce context-switches between UI & CLI.
 
-## Explanation
+## Use Case (1) - (2): 
 
-Explain the proposed change as though it was already implemented and you were explaining it to a user. Depending on which layer the proposal addresses, the "user" may vary or there may even be multiple.
-We encourage you to use examples, diagrams, or whatever else helps to explain the proposal.
+:warning: This feature is supported only for Keptn-services (integrations) that run on the control plane. Consequently, secrets for external Keptn-services are not managed.
 
-## Internal details
+#### (1) As a user, I would like to create a secret for a Keptn-service (aka Integration) using the Keptn Bridge.
 
-From a technical perspective, how do you propose accomplishing the proposal? 
+*User flow in Bridge:*
+* Open the Uniform of a project and select the **Secrets** tab. 
+* Add a secret using the provided form: 
+  * Specify the `Name` and at least one `key:value` pair
+  * Add multiple `key:value` pairs by clicking on the + symbol
+  * By clicking the *Add Secret* button, the secret is created and listed above. 
+  * After successfully creating the secret, the form is empty. 
+*Details:*
+  * By default, the value field hides the entered value. 
+  * If the value should be revealed, use the "eye" icon.
 
-In particular, please explain:
+![image](https://user-images.githubusercontent.com/729071/117795505-8ac08c80-b24e-11eb-83a0-13feb48fb7fc.png)
 
-* How would the change impact and interact with existing functionality?
-* Likely error modes and how to handle them
-* Corner cases and how to handle them
+* Switch the tab and go to **Services**. 
+* This view shows all all Keptn-services (Integrations) that are connected to the Control Plane and subscribed to this project
+* Select the Keptn-service that should get access to the created secret
+* In the *Secrets* section, give the service permissions to access the secret
 
-While you do not need to prescribe a particular implementation - a KEP should be about **behavior**, not the implementation - it may be useful to provide at least one suggestion as to how the proposal *could* be implemented. This helps reassure reviewers that implementation is at least possible, and often helps them thinking more deeply about trade-offs, alternatives, etc.
+![image](https://user-images.githubusercontent.com/729071/117795997-f7d42200-b24e-11eb-836f-d797dc3937e6.png)
 
-## Trade-offs and mitigations
 
-* What are some (known) drawbacks? 
-* What are some ways that they might be mitigated?
+#### (2) As a user, I would like to delete a secret of a Keptn-service (aka Integration) using the Keptn Bridge.
 
-Note that mitigations do not need to be complete *solutions* and they do not need to be accomplished directly through your proposal. A suggested mitigation may even warrant its own KEP.
+*User flow in Bridge:*
+* Select the **Secrets** tab and click the "X" to delete the particular secret.
+* If the secret is in use by a Keptn-service, show a notification to inform the user and provide an option to `Cancel` and to `Delete Secret`:
 
-## Breaking changes
+![image](https://user-images.githubusercontent.com/729071/117797319-28688b80-b250-11eb-9dd9-cde249351add.png)
 
-Could this proposal cause any breaking changes (e.g., in the spec or within any workflow)?
-
-## Prior art and alternatives
-
-* What are some prior and/or alternative approaches? E.g., is there a corresponding feature in OpenTracing or OpenCensus? 
-* What are some ideas that you have rejected?
-
-## Open questions
-
-What are some questions that you know aren't resolved yet by the KEP? 
-
-> These may be questions that could be answered through further discussion, implementation experiments, or anything else that the future may bring.
-
-## Future possibilities
-
-What are some future changes that this proposal would enable?
