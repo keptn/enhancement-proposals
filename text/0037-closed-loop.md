@@ -1,4 +1,4 @@
-# Closed loop remediation with Shipyard v2
+# Closed loop remediation with Shipyard v0.2
 
 **Success Criteria:** A remediation process is modeled in the Shipyard of a project
 
@@ -25,29 +25,19 @@
   sequences: 
   - name: remediation
       triggeredOn: 
-      - event: production.problem.opened
       - event: production.remediation.finished
           selector:
             match:
-              result: fail
+              evaluation.result: fail
       tasks:
-      - name: get-action 
-      - name: action
-      - name: wait
-        properties:
-        - time: "10m"
-      - name: evaluation # Note: (SLI has to be the problem and SLO: problem = 0)
+    - name: get-action 
+    - name: action
+    - name: evaluation
+      triggeredAfter: "10m"
+      properties:
+        timeframe: "5m"
 ```
 
 ## Open Question
 
 - How can we stop the loop when, for example, the action returned `result=fail`?
-
-## Epics
-
-- Implement a `wait-service` that subscribes to the `wait` task
-- Adapt the dynatrace-service to consider the ProblemDetailsJSON property containing the problem root cause
-- Clean-up remediation-service to not control the workflow: just get the correct remediation action based on the problem root cause and current remediation progress
-- Prepare an SLO/SLI file that checks whether the Problem has been closed (as part of the remediation process)
-- Are there updates of the current action-providers (helm-service / unleash-service) necessary? 
-- Update of tutorials/examples/docs/spec to support the remediation process modeled via Shipyard v.0.2
