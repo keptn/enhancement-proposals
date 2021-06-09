@@ -6,7 +6,7 @@ This repository contains two elements that are important to drive the developmen
 
 ## Keptn Roadmap
 
-Please find [here](./roadmap) the *Keptn Roadmap* which defines the building blocks for 2021. Based on the building blocks, Keptn Enhancements Proposals are derived. 
+Please find [here](./roadmap.md) the *Keptn Roadmap* which defines the building blocks for 2021. Based on the building blocks, Keptn Enhancements Proposals are derived. 
 
 ## Keptn Enhancement Proposals
 
