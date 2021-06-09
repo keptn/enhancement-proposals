@@ -11,7 +11,7 @@ This is an incomplete list of work we hope to tackle in 2021. The *Roadmap* list
 * *Keptn Hardening*:
   * Secret endpoint: [#2829](https://github.com/keptn/keptn/discussions/2829)
   * Run containers as non-root user: [#3764](https://github.com/keptn/keptn/pull/3764)
-* *Basic Uniform Support*:
+* *Uniform Support*:
   * [KEP 42](https://github.com/keptn/enhancement-proposals/issues/42) - Basic Uniform support in Keptn and Visualization in Bridge (*Mockup*)
   * [KEP 45](https://github.com/keptn/enhancement-proposals/pull/45) - Troubleshooting support for Keptn-services (aka. Integrations)
   * [KEP 46](https://github.com/keptn/enhancement-proposals/pull/46) - Creating/Deleting Secrets for Integrations using Bridge
@@ -36,13 +36,13 @@ This is an incomplete list of work we hope to tackle in 2021. The *Roadmap* list
 | Building block        	| Start   	| End    	| finished KEP         	| Keptn Release     |
 |-----------------------	|---------	|--------	|---------------------	|-----------------	|
 | Shipyard v0.2                                       | 11/2020 	| 3/2021 	  | [KEP 06](https://github.com/keptn/enhancement-proposals/pull/6)             | [0.8.0](https://github.com/keptn/keptn/releases/tag/0.8.0) 	|
-| Basic Uniform Support                               | 3/2021  	| 3/2021 	  | [KEP 42](https://github.com/keptn/enhancement-proposals/pull/42) (UI part)  | [0.8.1](https://github.com/keptn/keptn/releases/tag/0.8.1) 	|
+| Uniform Support                               | 3/2021  	| 3/2021 	  | [KEP 42](https://github.com/keptn/enhancement-proposals/pull/42) (UI part)  | [0.8.1](https://github.com/keptn/keptn/releases/tag/0.8.1) 	|
 | *Keptn Hardening*  	                                | 3/2021  	| 4/2021 	  | -                    	                                                      | [0.8.2](https://github.com/keptn/keptn/releases/tag/0.8.2) 	|
 | Shipyard v0.2                                       | 4/2021  	| 5/2021 	  | [KEP 37](https://github.com/keptn/enhancement-proposals/pull/37)            | [0.8.3](https://github.com/keptn/keptn/releases/tag/0.8.3) 	|
-| Basic Uniform Support                               | 5/2021  	| 6/2021 	  | [KEP 45](https://github.com/keptn/enhancement-proposals/pull/45) / [KEP 46](https://github.com/keptn/enhancement-proposals/pull/46) 	| 0.9.0 (in progress) |
+| Uniform Support                               | 5/2021  	| 6/2021 	  | [KEP 45](https://github.com/keptn/enhancement-proposals/pull/45) / [KEP 46](https://github.com/keptn/enhancement-proposals/pull/46) 	| 0.9.0 (in progress) |
 | - Shipyard v2 <br> - Zero-downtime Upgrades & HA    | 6/2021  	| 7/2021 	  | [KEP 39](https://github.com/keptn/enhancement-proposals/pull/39)            | 0.9.1                         |
-| - Basic Uniform Support <br> - Zero-downtime Upgrades & HA  | 7/2021  	| 8/2021 	  | [KEP 42](https://github.com/keptn/enhancement-proposals/pull/42) (Core part), [KEP ++]()            | tbd                           |
-| - Basic Uniform Support <br> - Zero-downtime Upgrades & HA  | 8/2021  	| 9/2021 	  | [KEP ##]() 	                                                        | tbd                           |
+| - Uniform Support <br> - Zero-downtime Upgrades & HA  | 7/2021  	| 8/2021 	  | [KEP 42](https://github.com/keptn/enhancement-proposals/pull/42) (Core part), [KEP ++]()            | tbd                           |
+| - Uniform Support <br> - Zero-downtime Upgrades & HA  | 8/2021  	| 9/2021 	  | [KEP ##]() 	                                                        | tbd                           |
 | - Zero-downtime Upgrades & HA <br> - Security: AC           | 9/2021  	| 10/2021 	| [KEP 48](https://github.com/keptn/enhancement-proposals/pull/48) / x 	        | tbd                           |
 | Keptn Execution Plane                               | 10/2021  	| 11/2021   | x                     | tbd                           |
 | Keptn Eco-system Expansion                          | 11/2021  	| 11/2021   | x 	                  | tbd                           |
