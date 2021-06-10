@@ -4,32 +4,32 @@ This is an incomplete list of work we hope to tackle in 2021. The *Roadmap* list
 
 ## Roadmap
 
-* *Shipyard v0.2*: 
+* **Shipyard v0.2**: *Clear separation of control-plane and execution-plane* & *Multi-cluster support*
   * [KEP 06](https://github.com/keptn/enhancement-proposals/pull/6) - The next generation of Shipyard
   * [KEP 37](https://github.com/keptn/enhancement-proposals/pull/37) - Closed-loop remediation with Shipyard v0.2
   * [KEP 39](https://github.com/keptn/enhancement-proposals/pull/37) - Advanced Sequence Handling in Control-plane
-* *Keptn Hardening*:
+* **Keptn Hardening**
   * Secret endpoint: [#2829](https://github.com/keptn/keptn/discussions/2829)
   * Run containers as non-root user: [#3764](https://github.com/keptn/keptn/pull/3764)
-* *Uniform Support*:
+* **Keptn Uniform support**: *Seamless integration of DevOps tooling into the sequence orchestration by Keptn.*
   * [KEP 42](https://github.com/keptn/enhancement-proposals/issues/42) - Basic Uniform support in Keptn and Visualization in Bridge (*Mockup*)
   * [KEP 45](https://github.com/keptn/enhancement-proposals/pull/45) - Troubleshooting support for Keptn-services (aka. Integrations)
   * [KEP 46](https://github.com/keptn/enhancement-proposals/pull/46) - Creating/Deleting Secrets for Integrations using Bridge
-  * [KEP ++]() - Subscription management for Keptn-services
+  * [KEP ++]() - Subscription management for Integrations
   * [KEP ##]() - Seamless integration of Webhook-based services
-* *Zero-downtime Upgrades & High Availability*:
+* **Zero-downtime Upgrades & High Availability**: *Running Keptn at scale without downtime for end-users.*
   * [KEP 48](https://github.com/keptn/enhancement-proposals/pull/48) - Zero-downtime Upgrades & High Availability
-* *Alignment of [Continous Delivery Foundation (CDF) eventing](https://github.com/cdfoundation/sig-events)*: 
-  * [KEP **]() - POC: Connect Tekton and Keptn by CDF events
-* *Security: Access Control*:
+* **Alignment with [Continous Delivery Foundation (CDF) eventing standard](https://github.com/cdfoundation/sig-events)**: *Establish an industry-wide eventing standard jointly with the CDF.* 
+  * [KEP **]() / [PR](https://github.com/cdfoundation/sig-events/pull/55) - Proof-of-Concept: Connect Tekton and Keptn by CDF events
+* **Security: Access Control**: *Allow fine-grained access control for interacting with Keptn.*
   * Role-based Access Control - Read/Execution Access
   * Keptn API Token management
-* *Keptn Execution Plane*:
+* **Execution-Plane support**: *Central component (e.g., Operator) for installing and managing execution-planes.*
   * Operator for Keptn-services (Integrations) on Execution Plane
-* *Keptn Eco-system Expansion*
+* **Keptn Eco-system Expansion**
   * SDK for Integration Development
-* *Multi-tenancy Support*
-  * *Step-wise introduce multi-tenancy support*
+* (future) **Multi-tenancy**: *Reduction of resource footprint by multi-tenant capabilities.* 
+  * Stepwise introduction of multi-tenancy capabilities
 
 ## Timeline / Release plan
 
