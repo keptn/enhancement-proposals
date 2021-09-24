@@ -19,7 +19,7 @@ The overall idea is to use Kubernetes RBAC mechanisms to protect the access of s
 More precisely, when a new secret is created/edited/deleted, the secret-service also has to create 
 (1) a role that allows reading this secret (implementation already exists) and 
 (2) a role binding which maps the role to a service account (the “scope”).
-Then, the service consuming the secret (e.g. the dynatrace-service or the webhook-service) reads
+Then, the service consuming the secret (e.g. the webhook-service) reads
 the secret via the Kubernets API where it is checked whether the associated service account
 has the required role.
 
