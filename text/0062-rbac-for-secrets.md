@@ -1,7 +1,7 @@
 # Authorization for Keptn-managed secrets using Kubernetes RBAC mechanisms
 
 ## Status quo
-Keptn services like the webhook-service or the dynatrace-service need access to Kubernetes secrets.
+Keptn services like the webhook-service or services that integrate with 3rd parties need access to Kubernetes secrets.
 For those secrets, we do not know the names as they are added by the user.
 Hence, those services currently have a Kubernetes role which gives them the permission 
 to read any secret within the namespace where Keptn is installed.
