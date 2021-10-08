@@ -6,10 +6,10 @@
 #
 # Get in touch with us via the Keptn Community
 #  https://github.com/keptn/community
-# 
 #
-# Learn about CODEOWNERS file format: 
+#
+# Learn about CODEOWNERS file format:
 #  https://help.github.com/en/articles/about-code-owners
 #
 
-* @AloisReitbauer @christian-kreuzberger-dtx @johannes-b @danielkhan
+* @AloisReitbauer @christian-kreuzberger-dtx @johannes-b
