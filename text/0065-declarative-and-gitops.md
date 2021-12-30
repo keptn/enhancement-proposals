@@ -18,6 +18,7 @@
 * [Handling of Helm Chart and Configuration Versions  · Issue #3817 · keptn/keptn · GitHub](https://github.com/keptn/keptn/issues/3817) - Handling of Helm Chart and Configuration Versions
 * [Allow importing a project from an existing Git upstream · Issue #3809 · keptn/keptn · GitHub](https://github.com/keptn/keptn/issues/3809) - Allow importing a project from an existing Git upstream
 * [Allow forcing new project creation with existing Git upstream · Issue #3808 · keptn/keptn · GitHub](https://github.com/keptn/keptn/issues/3808) - Allow forcing new project creation with existing Git upstream
+* [keptn apply · Issue #63 · keptn/enhancement-proposals · GitHub](https://github.com/keptn/enhancement-proposals/issues/63) - keptn apply
 
 ## Related Discussions
 * [Operator based GitOps approach in Keptn · Discussion #5296 · keptn/keptn · GitHub](https://github.com/keptn/keptn/discussions/5296)
