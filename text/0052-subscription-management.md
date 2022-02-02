@@ -23,18 +23,11 @@ A subscription has:
 * `event`: Event the subscription works on (e.g.: `sh.keptn.event.deployment.triggered`, `sh.keptn.event.release.triggered`)
 * `filters`: On the project, stage, and service level
 
-![image](https://user-images.githubusercontent.com/729071/116056478-21515300-a67e-11eb-8c08-a9b903483f99.png)
+![image](https://user-images.githubusercontent.com/729071/125417384-232a3f48-d188-4e98-83dc-7a6709c409fe.png)
 
 *User flow:*
 - The button `Add subscription` opens an empty form to set `name` and to specify `event` and `filters`. 
 ![image](https://user-images.githubusercontent.com/729071/122737979-dc165f80-d281-11eb-9b59-ca2db4262117.png)
-- If it is a Keptn-service running on the remote execution plane, the below text field is updated when adding a new subscription or editing an existing one. This text field contains the `helm upgrade` command to update that service including its subscriptions. 
-![image](https://user-images.githubusercontent.com/729071/122738183-0831e080-d282-11eb-97e0-ad1f76acc9d0.png)
-
-*open Questions:*
-- How to maintain a list of subscriptions? This can't be implemented by the environment variables of the `distributor` but rather by a separate ConfigMap.
-  - By default, a distributor can support just one subscription by its environment variables.
-- How does the `helm upgrade` command look like?
 
 ### As a user, I want to add multiple subscriptions to my integration by using the Bridge and then automatically apply the changes on the control-plane.
 
@@ -52,20 +45,17 @@ A subscription has:
 
 ![image](https://user-images.githubusercontent.com/729071/116056690-59f12c80-a67e-11eb-8ed9-5e89a1a9e528.png)
 
-❓ How does the `helm upgrade` command look like? 
-
 ## supporting Use Cases
 
-### As a user, I can validate whether my Shipyard (for this project) is covered by the uniform. If a missing subscription is found, I can add it with two clicks and one `helm upgrade` or click on `Update subscriptions` 
+### As a user, I can validate whether my Shipyard (for this project) is covered by the uniform. If a missing subscription is found, I can add it with two clicks.
 
-![image](https://user-images.githubusercontent.com/729071/122741316-20efc580-d285-11eb-87f7-07e6fd1ae367.png)
+![image](https://user-images.githubusercontent.com/729071/125417911-00ebd57e-709e-4660-b955-8e3c26fff74e.png)
 
 *User flow:*
 - Since the Keptn core knows the registered integrations and the Shipyard for this project, an API endpoint can derive and return the coverage of tasks (events) by subscriptions. 
 - (1) The Bridge displays the Shipyard and highlights tasks that don't have a subscription. 
 - The Bridge displays a drop-down containing all services that support this particular task (event). The Keptn core has to offer an endpoint, to get **all** registered services by their supported event type.  
 - (2) - (3) By clicking the `Add subscription` button, an additional subscription - with the event type and stage pre-defined - is created. 
-- (4) Finally, the user has to apply the changes (by a `helm upgrade`) to make the subscription working. 
 
 ### As a user, I want to get notified when the deployed Keptn-service does not work with the current Keptn installation.
 
