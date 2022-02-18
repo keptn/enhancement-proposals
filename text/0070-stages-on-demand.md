@@ -19,12 +19,10 @@ _Currently, it is not possible to add a new stage after the initial project setu
 * https://github.com/keptn/keptn/issues/4693 - Add stages after initial project creation: This allows adopting the project due to changed requirements in the software (application) development lifecycle. 
 * It should be possible to spin up a temporary test stage, e.g. for functional/unit tests, as part of continuous integration (CI). This would shift Keptn closer to the developer and establish it already as an integral part of CI.  
 
-*Related discussions:*
-* n/a
+*Related discussions / PR*
+* PoC showing required changes in Keptn core: https://github.com/keptn/keptn/pull/6410
 
 ## What
-
-### What it is?
 
 * As mentioned above, stages are ordered from left to right creating a child-parent relationship. The following example shows a setup with four stages. While the stages `dev`, `hardening`, and `production` are in sequential order, the stage `production-remote` is parallel to `production` and has the `hardening` stage as _parent_.
 ![image](https://user-images.githubusercontent.com/729071/152763695-1362fa90-dd41-4f33-93d6-f35954b1ab81.png)
@@ -50,44 +48,21 @@ _Currently, it is not possible to add a new stage after the initial project setu
               - event: "dev.delivery.finished"
         [...]
   ```
-  To configure a *child-parent-relationship* between stages, both stages need to have the same sequence (`delivery`). Besides, the child stage has to have a `triggeredOn` set on the event of the parent stage (`dev.delivery.finished`). 
+To configure a *child-parent-relationship* between stages, both stages need to have the same sequence (`delivery`). Besides, the child stage has to have a `triggeredOn` set on the event of the parent stage (`dev.delivery.finished`). 
+
+### What it is?
 
 #### ⭐ Use Case: As a user, I can add a new stage to a project.
 
 This use case comes in two ways: 
-1. Add a new stage to extend the stage chain. For example, introduce a new stage `chaos` in-between `dev` and `hardening` for a dedicated testing purpose. > Extend stage chain
-2. Add a new stage `quality-assurance` that is parallel to another one. > Clone stage
+1. Add a new stage to extend the stage chain. For example, introduce a new stage `chaos` in-between `dev` and `hardening` for a dedicated testing purpose.
+2. Add a new stage `quality-assurance` that is parallel to another one.
 
-![image](https://user-images.githubusercontent.com/729071/152803028-6d930aa6-8a72-40a3-b931-4fc356fc0e70.png)
+_Outcome:_
+![image](https://user-images.githubusercontent.com/729071/154692956-020cb941-c5d6-4192-91e0-e59312eaf4cc.png)
 
-API: **POST** `/project/{project}/stage/{stage}` 
+Both ways of adding a stage are supported by adjusting the shipyard of that project accordingly: 
 
-_Extend stage chain:_
-To extend the stage chain with `chaos` after `dev`, execute:
-
-```
-keptn create stage chaos --project sockshop --follows dev
-```
-
-❓ Or should it be: _To extend the deliver line with `chaos` before `hardening`, ..._
-
-_Clone stage:_
-To clone `hardening` into `quality-assurance`, execute:  
-```
-keptn create stage quality-assurance --project sockshop --clone hardening
-```
-
-#### ⭐ Use Case: As a user, I can remove a stage from a project.
-
-API: **DELETE** `/project/{project}/stage/{stage}` 
-
-To delete a stage from a project, execute:  
-
-```
-keptn delete stage quality-assurance --project sockshop
-```
-
-When deleting a stage, the children of the stage need to be updated if they have set a `triggeredOn` to the stage. Given, for example, the following three stages: `dev`, `hardening`, and `production` that are linked. 
 ```
 apiVersion: "spec.keptn.sh/0.2.0"
 kind: "Shipyard"
@@ -101,27 +76,59 @@ spec:
           tasks:
             - name: "deployment"
 
-    - name: "hardening"
+    - name: "chaos"
       sequences:
         - name: "delivery"
           triggeredOn:
             - event: "dev.delivery.finished"
-      [...]
+          tasks:
+            - name: "deployment"
 
-    - name: "production"
+    - name: "hardening"
       sequences:
         - name: "delivery"
           triggeredOn:
-            - event: "hardening.delivery.finished"
+            - event: "chaos.delivery.finished"
+            
+   - name: "quality-assurance"
+      sequences:
+        - name: "delivery"
+          triggeredOn:
+            - event: "chaos.delivery.finished"
       [...]
 ```
-* If the `dev` stage gets deleted, the _delivery_ sequence of `hardening` has no trigger event anymore.
-* If the `hardening` stage gets deleted, the _delivery_ sequence of `production` needs to listen on the `dev.delivery.finished` event.
-* If the `production` stage gets deleted, no update is needed since there is no child sequence. 
+
+* After updating the shipyard, a `keptn upgrade project` or API call on PUT `/project/{sockshop}` adds the new stages:
+```
+keptn update project sockshop --shipyard=new_shipyard.yaml
+```
+![image](https://user-images.githubusercontent.com/729071/154693162-98973533-835c-4ea5-9a4c-ff282f4daf9c.png)
+
+
+#### ⭐ Use Case: As a user, I can remove a stage from a project.
+
+
+* To remove a stage from a project, the user has to modify the shipyard of that project accordingly: 
+* After updating the shipyard, a `keptn upgrade project` or API call on PUT `/project/{sockshop}` removes the stages
+
+```
+keptn update project sockshop --shipyard=new_shipyard.yaml
+```
+![image](https://user-images.githubusercontent.com/729071/154693162-98973533-835c-4ea5-9a4c-ff282f4daf9c.png)
+
+#### What it is? Summary:
+
+* Implementation of the PUT `/project/` endpoint allowing a user to add/remove a stage by updating the project.
+* CLI / Bridge leverage this endpoint to add/remove stages:
+  * `keptn update project sockshop --shipyard=new_shipyard.yaml`
+  * In the Bridge, it should be possible to update the shipyard in the *Settings* > *Project* page:
+  ![image](https://user-images.githubusercontent.com/729071/154693886-25f8f49f-0fc2-4673-9fc7-c739d55ad39e.png)
 
 ### What it is not?
 
-* to-be-defined
+* Implementation of the API endpoints for the *stage* entity:
+  * API: **POST** `/project/{project}/stage/{stage}` > Creates a stage for theproject.
+  * API: **DELETE** `/project/{project}/stage/{stage}` > Deletes stage from project and updates the shipyard accordingly.
 
 ## Open Discussions
 
