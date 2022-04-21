@@ -1,6 +1,6 @@
 # Add/remove Stages to/from Project
 
-**Success Criteria**: Keptn supports up/down-scaling the number of stages of a project.
+**Success Criteria**: Keptn supports adding and removing stages for existing projects.
 
 ## Short abstract
 _In Keptn, a project stage (or just stage) defines a logical space, which has a dedicated purpose for an application in a continuous delivery process. Typically, a project has multiple stages that are ordered depending on the maturity level of the application. For instance, a project can consist of a `deployment`, `hardening`, and `production` stage whereas the maturity level grows from left to right. While a `deployment` stage is used for feature development and initial testing, an application in `production` is bullet-proofed and services production load._
