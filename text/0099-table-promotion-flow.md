@@ -1,5 +1,7 @@
 # Table Promotion Flow
 
+**State: DRAFTING**
+
 Allow starting deployment flows from previous artifacts which are perhaps multiple iterations previous.
 
 ## Motivation
