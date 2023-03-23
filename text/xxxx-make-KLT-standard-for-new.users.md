@@ -1,51 +1,38 @@
 # Make Keptn Lifecycle Toolkit the standard for new users
 
-
+KLT is the next step after Keptn V 1.x. It is more flexible, better integrated into Kubernetes and also more lightweight ean extensible. Therefore we should direct new user to start their journey with the lifecycle toolkit right away.
 
 ## Motivation
 
-* Which use-cases does this KEP enable?
-* Which value would this KEP create?
+* New users get started on the latest version of Keptn
+* New extensions/services will also be built in a future proof way
+* We avoid that users later have to migrate
+* We reduce confusion between the lifecycle toolkit and Keptn V 1.x
+* This will allow us to focus any new developments on the lifecycle toolkits
 
 ## Explanation
 
-Explain the proposed change as though it was already implemented and you were explaining it to a user. Depending on which layer the proposal addresses, the "user" may vary or there may even be multiple.
-We encourage you to use examples, diagrams, or whatever else helps to explain the proposal.
+* We rework the website to be better alinged with the lifecycle toolkit.
+* All onboarding flows will be directed towards the lifecycle toolkit an lifecycle toolkit docs. 
+* The current Keptn V1.x documentation will still be available but under a dedicated menu item.
+* All V1.x ressources will have a banner stating "If you are new to Keptn we recomment already starting with the lfiecycle toolkit"
 
 ## Internal details
 
-From a technical perspective, how do you propose accomplishing the proposal? 
-
-In particular, please explain:
-
-* How would the change impact and interact with existing functionality?
-* Likely error modes and how to handle them
-* Corner cases and how to handle them
-
-While you do not need to prescribe a particular implementation - a KEP should be about **behavior**, not the implementation - it may be useful to provide at least one suggestion as to how the proposal *could* be implemented. This helps reassure reviewers that implementation is at least possible, and often helps them thinking more deeply about trade-offs, alternatives, etc.
 
 ## Trade-offs and mitigations
 
-* What are some (known) drawbacks? 
-* What are some ways that they might be mitigated?
-
-Note that mitigations do not need to be complete *solutions* and they do not need to be accomplished directly through your proposal. A suggested mitigation may even warrant its own KEP.
+* Existing users might be confused when coming to the Keptn website. *Mitigation* we have been informing everybody about our plans sie last fall
 
 ## Breaking changes
 
-Could this proposal cause any breaking changes (e.g., in the spec or within any workflow)?
+This is a breaking change, how we onbaord users.
 
 ## Prior art and alternatives
 
-* What are some prior and/or alternative approaches? E.g., is there a corresponding feature in OpenTracing or OpenCensus? 
-* What are some ideas that you have rejected?
+We were discussing alternatives on whether providing different onboarding paths. However, all approaches resulted in more complexity for the user. 
 
 ## Open questions
 
-What are some questions that you know aren't resolved yet by the KEP? 
+The main question that is not resolved is how we migrate existing users over to the lifecycle toolkit. As this is a bigger discusson that is also seperate it should be discussed in a seperate KEP.
 
-> These may be questions that could be answered through further discussion, implementation experiments, or anything else that the future may bring.
-
-## Future possibilities
-
-What are some future changes that this proposal would enable?
