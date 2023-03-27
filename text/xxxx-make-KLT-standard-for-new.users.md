@@ -15,7 +15,7 @@ KLT is the next step after Keptn V 1.x. It is more flexible, better integrated i
 * We rework the website to be better alinged with the lifecycle toolkit.
 * All onboarding flows will be directed towards the lifecycle toolkit an lifecycle toolkit docs. 
 * The current Keptn V1.x documentation will still be available but under a dedicated menu item.
-* All V1.x ressources will have a banner stating "If you are new to Keptn we recomment already starting with the lfiecycle toolkit"
+* All V1.x resources will have a banner stating "If you are new to Keptn we recommend starting with the lifecycle toolkit"
 
 ## Internal details
 
