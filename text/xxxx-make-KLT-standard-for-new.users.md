@@ -6,7 +6,7 @@ KLT is the next step after Keptn V 1.x. It is more flexible, better integrated i
 
 * New users get started on the latest version of Keptn
 * New extensions/services will also be built in a future proof way
-* We avoid that users later have to migrate
+* These users will not have to migrate later
 * We reduce confusion between the lifecycle toolkit and Keptn V 1.x
 * This will allow us to focus any new developments on the lifecycle toolkits
 
