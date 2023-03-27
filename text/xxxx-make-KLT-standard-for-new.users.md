@@ -1,6 +1,6 @@
 # Make Keptn Lifecycle Toolkit the standard for new users
 
-KLT is the next step after Keptn V 1.x. It is more flexible, better integrated into Kubernetes and also more lightweight ean extensible. Therefore we should direct new user to start their journey with the lifecycle toolkit right away.
+KLT is the next step after Keptn V 1.x. It is more flexible, better integrated into Kubernetes and also more lightweight and extensible. Therefore we should direct new users to start their journey with the lifecycle toolkit right away.
 
 ## Motivation
 
