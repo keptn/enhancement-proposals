@@ -22,7 +22,7 @@ KLT is the next step after Keptn V 1.x. It is more flexible, better integrated i
 
 ## Trade-offs and mitigations
 
-* Existing users might be confused when coming to the Keptn website. *Mitigation* we have been informing everybody about our plans sie last fall
+* Existing users might be confused when coming to the Keptn website. *Mitigation* we have been informing everybody about our plans since last fall
 
 ## Breaking changes
 
