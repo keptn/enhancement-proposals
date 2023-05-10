@@ -1,6 +1,6 @@
 # KEP 90: Functions - Runtime Adaptions
 
-**State: DRAFTING**
+**State: APPROVED**
 
 ## Motivation
 Keptn Functions provide an easy way to add functionality to the delivery process. At the moment, the runtime is implemented in a very simple way, it is a simple container which executes deno functions. If the function succeeeds, everything is fine, if it fails, the container exits with an error code. This behavior has some drawbacks:
