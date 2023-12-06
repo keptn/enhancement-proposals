@@ -1,6 +1,6 @@
 # KEP0087 - Lifecycle Toolkit Parent Trace ID in Keptn Apps 
 
-**State: ON HOLD**
+**State: IN PROGRESS**
 
 ## Motivation
 When promoting apps to other instances, an end user would like to see the whole flow across the stages in a single trace. This KEP proposes the usage of the [W3C trace-id](https://www.w3.org/TR/trace-context/#trace-id) to create links between traces across stages.
