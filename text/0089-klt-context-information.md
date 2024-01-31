@@ -19,6 +19,7 @@ At the moment, the context information is passed as a JSON string in the `KEPTN_
     WorkloadVersion string `json:"workloadVersion"`
     TaskType        string `json:"taskType"`
     ObjectType      string `json:"objectType"`
+  }
 ```
 
 This information is passed to the tasks as a JSON string in the `KEPTN_CONTEXT` environment variable which can be used in the corresponding tasks.
