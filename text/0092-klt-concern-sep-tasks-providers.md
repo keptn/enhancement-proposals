@@ -1,6 +1,6 @@
 # KEP 92: Separation of Concerns for Tasks and MetricProviders
 
-**State: DRAFTING**
+**State: IMPLEMENTED**
 
 ## Motivation
 The Lifecycle Toolkit provides Custom Resources to define tasks and metric providers. At the moment, it assumes that KeptnTaskDefinitions, as well as Metric Providers are defined in the same namespace as the Application/Workload which gets deployed. For some reasons, this might not be beneficial for the user. 
