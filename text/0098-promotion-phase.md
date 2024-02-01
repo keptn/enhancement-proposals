@@ -7,7 +7,7 @@ Add a new lifecycle phase after post deployment dedicated to GitOps promotion ta
 ## Motivation
 
 Since one of the main use cases for Keptn is enhancement of GitOps workflows, we should have bigger focus on that
-by introducing a dedicated stage after the post-deployment phase for GitOps promotion tasks.
+by introducing a dedicated stage after the post Application deployment phase for GitOps promotion tasks.
 This will make it much clearer for Keptn users how to set up their GitOps-assisted workflows in multi-stage
 environments.
 
