@@ -35,7 +35,12 @@ flexibility since users lose the option to not promote when post-deployment task
 
 ## Open questions
 
-For now, none.
+One open point is how the new phase influences the failure or passing state of the overall deployment of a user's
+application.
+What happens when everything passes, but a promotion task fails?
+My suggestion would be to let users configure this through some settings. Similar to the non-blocking behaviour
+suggested in [#1934](https://github.com/keptn/lifecycle-toolkit/issues/1934), users could then decide
+if a failing promotion task should fail the overall deployment.
 
 ## Future possibilities
 
