@@ -13,7 +13,7 @@ there are multiple data points in the result for the query and apply the aggrega
 
 The proposal is to extend the specification of the `AnalysisValueTemplates` with an `spec.aggregation` field,
 similar to what is available in the `KeptnMetric` (see [specification](https://keptn.sh/latest/docs/reference/api-reference/metrics/v1beta1/#rangespec)).
-Using this field, the metrics operator can inspect the result for an analysis value returned by a metrics provider.,
+Using this field, the metrics operator can inspect the result for an analysis value returned by a metrics provider,
 and, if the aggregation function has been defined, use this function to aggregate the returned result if this is
 an array of multiple values, as opposed to a single value.
 
