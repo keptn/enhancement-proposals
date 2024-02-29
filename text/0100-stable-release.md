@@ -1,6 +1,6 @@
 # Releasing Stable Version
 
-Releasing a stable version of Keptn under the v2.0.0 tag.
+Releasing a stable version of Keptn under the v2.0.0 tag and bump the API to v1.
 
 **State: DRAFTING**
 
